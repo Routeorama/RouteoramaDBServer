@@ -1,4 +1,4 @@
-package test;
+package com.example.routeoramaserver.networking.callbacks;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
