@@ -14,6 +14,8 @@ import java.util.Iterator;
 
 public class LoginFromDB implements ILoginFromDB, LoginServerCallback {
 
+    private String uri = "mongodb+srv://RouteoramaDBAdmin:routeorama123@routeorama.tujmk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";;
+
     public LoginFromDB() {
         try {
             UnicastRemoteObject.exportObject(this, 0);
@@ -23,8 +25,12 @@ public class LoginFromDB implements ILoginFromDB, LoginServerCallback {
     }
 
     @Override
+    public void Start() {
+
+    }
+
+    @Override
     public User Login(String username, String password) throws RemoteException {
-        String uri = "mongodb+srv://RouteoramaDBAdmin:routeorama123@routeorama.tujmk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
         try (MongoClient client = MongoClients.create(uri)) {
             MongoCollection<Document> cookies = client.getDatabase("RouteoramaTest").getCollection("Users");
 
