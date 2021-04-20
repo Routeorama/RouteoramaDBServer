@@ -25,5 +25,6 @@ public class StartServer {
         ServerCallback connection = new ServerImpl();
         registry.bind("RouteoramaServer", connection);
         System.out.println("Server started on: " + InetAddress.getLocalHost().getHostAddress());
+        //System.out.println(connection.getLoginServer().Login("George", "george").toString());
     }
 }
