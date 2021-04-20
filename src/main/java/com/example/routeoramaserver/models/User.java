@@ -1,9 +1,10 @@
 package com.example.routeoramaserver.models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-public class User {
+public class User implements Serializable {
 
     // mock-up user obj with auto-generated methods used as a placeholder
     private String username;

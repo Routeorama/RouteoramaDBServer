@@ -1,6 +1,6 @@
-package com.example.routeoramaserver.Login;
+package com.example.routeoramaserver.login;
 
-import com.example.routeoramaserver.LoginServerCallback;
+import com.example.routeoramaserver.callbacks.login.LoginServerCallback;
 import com.example.routeoramaserver.models.User;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;

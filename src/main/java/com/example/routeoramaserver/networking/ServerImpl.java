@@ -1,23 +1,11 @@
 package com.example.routeoramaserver.networking;
 
-import com.example.routeoramaserver.Login.ILoginFromDB;
-import com.example.routeoramaserver.Login.LoginFromDB;
-import com.example.routeoramaserver.LoginServerCallback;
-import com.example.routeoramaserver.models.User;
+import com.example.routeoramaserver.login.LoginFromDB;
+import com.example.routeoramaserver.callbacks.login.LoginServerCallback;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
 
-import org.bson.Document;
-
-
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -61,14 +49,15 @@ public class ServerImpl implements IServer, ServerCallback {
 
     @Override
     public LoginServerCallback getLoginServer() throws RemoteException {
-        if(loginFromDB == null) {
-         synchronized (lock) {
-             try {
-                 loginFromDB = new LoginFromDB();
-             } catch (Exception e) {
-                 e.printStackTrace();
-             }
-         }
+        if (loginFromDB == null) {
+            synchronized (lock) {
+                if (loginFromDB == null)
+                    try {
+                        loginFromDB = new LoginFromDB();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+            }
         }
         return loginFromDB;
     }
