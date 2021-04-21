@@ -22,6 +22,7 @@ public class StartServer {
             System.setSecurityManager(new SecurityManager());
         }
         Registry registry = LocateRegistry.createRegistry(1099);
+
         ServerCallback connection = new ServerImpl();
         registry.bind("RouteoramaServer", connection);
         System.out.println("Server started on: " + InetAddress.getLocalHost().getHostAddress());

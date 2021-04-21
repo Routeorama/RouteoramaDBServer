@@ -12,21 +12,17 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Iterator;
 
-public class LoginFromDB implements ILoginFromDB, LoginServerCallback {
+public class LoginFromDB implements LoginServerCallback {
 
-    private String uri = "mongodb+srv://RouteoramaDBAdmin:routeorama123@routeorama.tujmk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";;
+    private String uri;
 
-    public LoginFromDB() {
+    public LoginFromDB(String uri) {
         try {
             UnicastRemoteObject.exportObject(this, 0);
+            this.uri = uri;
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void Start() {
-
     }
 
     @Override

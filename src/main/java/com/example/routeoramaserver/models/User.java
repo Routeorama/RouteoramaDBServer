@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class User implements Serializable {
 
-    // mock-up user obj with auto-generated methods used as a placeholder
+    //add user type with enum
     private String username;
     private String password;
     private String dob;
