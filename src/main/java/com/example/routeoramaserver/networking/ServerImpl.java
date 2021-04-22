@@ -1,11 +1,9 @@
 package com.example.routeoramaserver.networking;
 
-import com.example.routeoramaserver.callbacks.login.LoginServerCallback;
-import com.example.routeoramaserver.login.LoginFromDB;
+import com.example.routeoramaserver.callbacks.login.UserServerCallback;
+import com.example.routeoramaserver.login.UserServer;
 import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 
@@ -16,19 +14,18 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class ServerImpl implements IServer, ServerCallback {
-    private LoginServerCallback loginFromDB;
+public class ServerImpl implements ServerCallback {
+    private UserServerCallback userServerCallback;
     private final Lock lock = new ReentrantLock();
-    private static final String uri = "mongodb+srv://RouteoramaDBAdmin:routeorama123@routeorama.tujmk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
     public ServerImpl() {
         try {
             UnicastRemoteObject.exportObject(this, 0);
 
-            try (MongoClient client = MongoClients.create(uri)) {
-                MongoCollection<Document> cookies = client.getDatabase("RouteoramaTest").getCollection("Users");
-                addingDefaultUsers(cookies);
-            }
+//            try (MongoClient client = MongoClients.create(DB.URI)) {
+//                MongoCollection<Document> cookies = client.getDatabase("RouteoramaTest").getCollection("Users");
+//                addingDefaultUsers(cookies);
+//            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -65,17 +62,17 @@ public class ServerImpl implements IServer, ServerCallback {
     }
 
     @Override
-    public LoginServerCallback getLoginServer() throws RemoteException {
-        if (loginFromDB == null) {
+    public UserServerCallback getUserServer() throws RemoteException {
+        if (userServerCallback == null) {
             synchronized (lock) {
-                if (loginFromDB == null)
+                if (userServerCallback == null)
                     try {
-                        loginFromDB = new LoginFromDB(uri);
+                        userServerCallback = new UserServer();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
             }
         }
-        return loginFromDB;
+        return userServerCallback;
     }
 }

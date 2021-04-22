@@ -1,16 +1,11 @@
 package com.example.routeoramaserver;
 
 import com.example.routeoramaserver.networking.ServerImpl;
-import com.example.routeoramaserver.networking.IServer;
-import com.example.routeoramaserver.networking.ServerImpl;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
 
-
 import java.net.InetAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -26,6 +21,5 @@ public class StartServer {
         ServerCallback connection = new ServerImpl();
         registry.bind("RouteoramaServer", connection);
         System.out.println("Server started on: " + InetAddress.getLocalHost().getHostAddress());
-        //System.out.println(connection.getLoginServer().Login("George", "george").toString());
     }
 }

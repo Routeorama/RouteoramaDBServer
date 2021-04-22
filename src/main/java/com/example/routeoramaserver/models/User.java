@@ -1,12 +1,13 @@
 package com.example.routeoramaserver.models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class User implements Serializable {
 
-    //add user type with enum
+    // mock-up user obj with auto-generated methods used as a placeholder
     private String username;
     private String password;
     private String dob;
@@ -18,6 +19,15 @@ public class User implements Serializable {
         this.password = password;
         this.dob = dob;
         this.dateCreated = dateCreated;
+    }
+
+    public User(String username, String password, String dob) {
+        this.username = username;
+        this.password = password;
+        this.dob = dob;
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd:MM:yyyy hh:mm:ss");
+        this.dateCreated = now.format(dateTimeFormatter);
     }
 
     public String getUsername() {
