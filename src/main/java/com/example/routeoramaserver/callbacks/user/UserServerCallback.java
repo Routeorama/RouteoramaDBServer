@@ -1,4 +1,4 @@
-package com.example.routeoramaserver.callbacks.login;
+package com.example.routeoramaserver.callbacks.user;
 
 import com.example.routeoramaserver.models.User;
 

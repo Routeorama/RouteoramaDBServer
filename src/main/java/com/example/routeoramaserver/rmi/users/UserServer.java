@@ -1,9 +1,9 @@
-package com.example.routeoramaserver.login;
+package com.example.routeoramaserver.rmi.users;
 
-import com.example.routeoramaserver.callbacks.login.UserServerCallback;
+import com.example.routeoramaserver.callbacks.user.UserServerCallback;
 import com.example.routeoramaserver.models.User;
-import com.example.routeoramaserver.models.dao.users.IUserDAO;
-import com.example.routeoramaserver.models.dao.users.UserDAO;
+import com.example.routeoramaserver.dao.users.IUserDAO;
+import com.example.routeoramaserver.dao.users.UserDAO;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

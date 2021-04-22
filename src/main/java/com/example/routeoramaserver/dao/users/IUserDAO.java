@@ -1,4 +1,4 @@
-package com.example.routeoramaserver.models.dao.users;
+package com.example.routeoramaserver.dao.users;
 
 import com.example.routeoramaserver.models.User;
 

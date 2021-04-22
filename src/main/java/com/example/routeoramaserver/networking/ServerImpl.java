@@ -1,7 +1,7 @@
 package com.example.routeoramaserver.networking;
 
-import com.example.routeoramaserver.callbacks.login.UserServerCallback;
-import com.example.routeoramaserver.login.UserServer;
+import com.example.routeoramaserver.callbacks.user.UserServerCallback;
+import com.example.routeoramaserver.rmi.users.UserServer;
 import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
 import com.mongodb.client.MongoCollection;

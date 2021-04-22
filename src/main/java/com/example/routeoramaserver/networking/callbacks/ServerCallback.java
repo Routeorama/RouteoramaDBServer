@@ -1,6 +1,6 @@
 package com.example.routeoramaserver.networking.callbacks;
 
-import com.example.routeoramaserver.callbacks.login.UserServerCallback;
+import com.example.routeoramaserver.callbacks.user.UserServerCallback;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
