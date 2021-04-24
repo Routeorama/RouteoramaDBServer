@@ -8,6 +8,7 @@ import java.util.Objects;
 public class User implements Serializable {
 
     // mock-up user obj with auto-generated methods used as a placeholder
+    private static final long serialVersionUID = 6529685098267757690L;
     private String username;
     private String password;
     private String dob;
