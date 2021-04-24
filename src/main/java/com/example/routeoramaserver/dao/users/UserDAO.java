@@ -47,6 +47,8 @@ public class UserDAO implements IUserDAO {
             newUser.append("password", user.getPassword());
             newUser.append("dob", user.getDob());
             newUser.append("dateCreated", user.getDateCreated());
+            newUser.append("email", user.getEmail());
+            newUser.append("role", user.getRole());
             users.insertOne(newUser);
             return true;
         }
