@@ -1,6 +1,8 @@
 package com.example.routeoramaserver.networking;
 
+import com.example.routeoramaserver.callbacks.place.PlaceServerCallback;
 import com.example.routeoramaserver.callbacks.user.UserServerCallback;
+import com.example.routeoramaserver.rmi.places.PlaceServer;
 import com.example.routeoramaserver.rmi.users.UserServer;
 import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
@@ -17,6 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerImpl implements ServerCallback {
     private UserServerCallback userServerCallback;
     private final Lock lock = new ReentrantLock();
+
+    private PlaceServerCallback placeServerCallback;
+    private final Lock lock1 = new ReentrantLock();
 
     public ServerImpl() {
         try {
@@ -74,5 +79,20 @@ public class ServerImpl implements ServerCallback {
             }
         }
         return userServerCallback;
+    }
+
+    @Override
+    public PlaceServerCallback getPlaceServer() throws RemoteException {
+        if (placeServerCallback == null) {
+            synchronized (lock1) {
+                if (placeServerCallback == null)
+                    try {
+                        placeServerCallback = new PlaceServer();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+            }
+        }
+        return placeServerCallback;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.routeoramaserver;
 
+import com.example.routeoramaserver.models.Location;
+import com.example.routeoramaserver.models.Place;
 import com.example.routeoramaserver.networking.ServerImpl;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
 
@@ -21,5 +23,6 @@ public class StartServer {
         ServerCallback connection = new ServerImpl();
         registry.bind("RouteoramaServer", connection);
         System.out.println("Server started on: " + InetAddress.getLocalHost().getHostAddress());
+
     }
 }
