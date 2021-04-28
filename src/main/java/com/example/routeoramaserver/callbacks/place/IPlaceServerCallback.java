@@ -5,6 +5,6 @@ import com.example.routeoramaserver.models.Place;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface PlaceServerCallback extends Remote {
+public interface IPlaceServerCallback extends Remote {
     Place NewPlace(Place place) throws RemoteException;
 }

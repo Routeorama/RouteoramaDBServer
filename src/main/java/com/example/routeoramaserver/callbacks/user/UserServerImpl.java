@@ -1,6 +1,5 @@
-package com.example.routeoramaserver.rmi.users;
+package com.example.routeoramaserver.callbacks.user;
 
-import com.example.routeoramaserver.callbacks.user.UserServerCallback;
 import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.dao.users.IUserDAO;
 import com.example.routeoramaserver.dao.users.UserDAO;
@@ -8,11 +7,11 @@ import com.example.routeoramaserver.dao.users.UserDAO;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class UserServer implements UserServerCallback {
+public class UserServerImpl implements IUserServerCallback {
 
     private final IUserDAO userDAO;
 
-    public UserServer() {
+    public UserServerImpl() {
         try {
             UnicastRemoteObject.exportObject(this, 0);
         } catch (RemoteException e) {

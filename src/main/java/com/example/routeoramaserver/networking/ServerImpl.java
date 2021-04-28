@@ -1,9 +1,9 @@
 package com.example.routeoramaserver.networking;
 
-import com.example.routeoramaserver.callbacks.place.PlaceServerCallback;
-import com.example.routeoramaserver.callbacks.user.UserServerCallback;
-import com.example.routeoramaserver.rmi.places.PlaceServer;
-import com.example.routeoramaserver.rmi.users.UserServer;
+import com.example.routeoramaserver.callbacks.place.IPlaceServerCallback;
+import com.example.routeoramaserver.callbacks.place.PlaceServerImpl;
+import com.example.routeoramaserver.callbacks.user.IUserServerCallback;
+import com.example.routeoramaserver.callbacks.user.UserServerImpl;
 import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
 import com.mongodb.client.MongoCollection;
@@ -17,10 +17,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class ServerImpl implements ServerCallback {
-    private UserServerCallback userServerCallback;
+    private IUserServerCallback userServerCallback;
     private final Lock lock = new ReentrantLock();
 
-    private PlaceServerCallback placeServerCallback;
+    private IPlaceServerCallback placeServerCallback;
     private final Lock lock1 = new ReentrantLock();
 
     public ServerImpl() {
@@ -67,12 +67,12 @@ public class ServerImpl implements ServerCallback {
     }
 
     @Override
-    public UserServerCallback getUserServer() throws RemoteException {
+    public IUserServerCallback getUserServer() throws RemoteException {
         if (userServerCallback == null) {
             synchronized (lock) {
                 if (userServerCallback == null)
                     try {
-                        userServerCallback = new UserServer();
+                        userServerCallback = new UserServerImpl();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -82,12 +82,12 @@ public class ServerImpl implements ServerCallback {
     }
 
     @Override
-    public PlaceServerCallback getPlaceServer() throws RemoteException {
+    public IPlaceServerCallback getPlaceServer() throws RemoteException {
         if (placeServerCallback == null) {
             synchronized (lock1) {
                 if (placeServerCallback == null)
                     try {
-                        placeServerCallback = new PlaceServer();
+                        placeServerCallback = new PlaceServerImpl();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
