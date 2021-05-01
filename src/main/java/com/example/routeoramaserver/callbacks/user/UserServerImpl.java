@@ -1,28 +1,28 @@
 package com.example.routeoramaserver.callbacks.user;
 
+import com.example.routeoramaserver.dao.users.UserDAOManager;
 import com.example.routeoramaserver.models.User;
-import com.example.routeoramaserver.dao.users.IUserDAO;
-import com.example.routeoramaserver.dao.users.UserDAO;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.SQLException;
 
 public class UserServerImpl implements IUserServerCallback {
 
-    private final IUserDAO userDAO;
+    private UserDAOManager userDAOManager;
 
-    public UserServerImpl() {
+    public UserServerImpl() throws SQLException {
         try {
             UnicastRemoteObject.exportObject(this, 0);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        userDAO = new UserDAO();
+        userDAOManager = new UserDAOManager();
     }
 
     @Override
     public User Login(String username, String password) throws RemoteException {
-        return userDAO.login(username, password);
+        return userDAOManager.login(username, password);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class UserServerImpl implements IUserServerCallback {
 
     @Override
     public boolean Register(User user) throws RemoteException {
-        return userDAO.register(user);
+        return userDAOManager.register(user);
     }
 }

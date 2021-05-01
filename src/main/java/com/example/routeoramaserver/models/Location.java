@@ -5,31 +5,34 @@ import java.util.Objects;
 
 public class Location implements Serializable {
     private static final long serialVersionUID = 6529685098267757692L;
-    private double x, y;
-    private String country;
-    private String city;
+    private double lat, lng;
+    private String country, city;
+
+    public Location() {
+        super();
+    }
 
     public Location(double x, double y, String country, String city) {
-        this.x = x;
-        this.y = y;
+        this.lat = x;
+        this.lng = y;
         this.country = country;
         this.city = city;
     }
 
-    public double getX() {
-        return x;
+    public double getLat() {
+        return lat;
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public double getY() {
-        return y;
+    public double getLng() {
+        return lng;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 
     public String getCountry() {
@@ -53,19 +56,19 @@ public class Location implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Location location = (Location) o;
-        return Double.compare(location.x, x) == 0 && Double.compare(location.y, y) == 0 && Objects.equals(country, location.country) && Objects.equals(city, location.city);
+        return Double.compare(location.lat, lat) == 0 && Double.compare(location.lng, lng) == 0 && Objects.equals(country, location.country) && Objects.equals(city, location.city);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, country, city);
+        return Objects.hash(lat, lng, country, city);
     }
 
     @Override
     public String toString() {
         return "Location{" +
-                "x=" + x +
-                ", y=" + y +
+                "lat=" + lat +
+                ", lng=" + lng +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 '}';

@@ -7,8 +7,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 
-public class UserDAO implements IUserDAO {
-    private MongoCollection<Document> users;
+public class UserDAO {// implements IUserDAO {
+    /*private MongoCollection<Document> users;
 
     public User login(String username, String password) {
         try (MongoClient client = MongoClients.create(DB.URI)) {
@@ -32,6 +32,7 @@ public class UserDAO implements IUserDAO {
 
     }
 
+
     @Override
     public boolean register(User user) {
         try (MongoClient client = MongoClients.create(DB.URI)) {
@@ -52,5 +53,5 @@ public class UserDAO implements IUserDAO {
             users.insertOne(newUser);
             return true;
         }
-    }
+    }*/
 }

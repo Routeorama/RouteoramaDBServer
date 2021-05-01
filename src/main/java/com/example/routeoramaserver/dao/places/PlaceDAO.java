@@ -7,9 +7,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 
-public class PlaceDAO implements IPlaceDAO{
-
-    private MongoCollection<Document> places;
+public class PlaceDAO { // implements IPlaceDAO{
+    /*private MongoCollection<Document> places;
 
     @Override
     public Place NewPlace(Place place) {
@@ -27,14 +26,14 @@ public class PlaceDAO implements IPlaceDAO{
             newPlace.append("id", count);
             newPlace.append("name", place.getName());
             newPlace.append("description", place.getDescription());
-            newPlace.append("nameOfCreator", place.getNameOfCreator());
+            //newPlace.append("nameOfCreator", place.getNameOfCreator());
 
-            newPlace.append("Location", new Document().append("x", place.getLocation().getX())
-            .append("y", place.getLocation().getY()).append("country", place.getLocation().getCountry())
+            newPlace.append("Location", new Document().append("x", place.getLocation().getLat())
+            .append("y", place.getLocation().getLng()).append("country", place.getLocation().getCountry())
                     .append("city", place.getLocation().getCity()));
 
             places.insertOne(newPlace);
             return place;
         }
-    }
+    }*/
 }

@@ -3,37 +3,38 @@ package com.example.routeoramaserver.models;
 import com.example.routeoramaserver.enumClasses.Role;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Objects;
 
 public class User implements Serializable {
 
-    // mock-up user obj with auto-generated methods used as a placeholder
     private static final long serialVersionUID = 6529685098267757690L;
+    private int userId;
     private String username;
     private String password;
-    private String dob;
-    private String dateCreated;
+    private java.sql.Date dob;
+    private Date dateCreated;
     private String email;
     private Role role;
+    private String displayName;
 
-    public User(String username, String password, String dob, String dateCreated) {
+    public User(int userId, String username, String password, java.sql.Date dob, Role role, String displayName, Date dateCreated, String email) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.dob = dob;
         this.dateCreated = dateCreated;
+        this.displayName = displayName;
+        this.role = role;
+        this.email = email;
     }
 
-    public User(String username, String password, String dob, String email, Role role) {
-        this.username = username;
-        this.password = password;
-        this.dob = dob;
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd:MM:yyyy hh:mm:ss");
-        this.dateCreated = now.format(dateTimeFormatter);
-        this.email = email;
-        this.role = role;
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -52,19 +53,19 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getDob() {
+    public java.sql.Date getDob() {
         return dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(java.sql.Date dob) {
         this.dob = dob;
     }
 
-    public String getDateCreated() {
+    public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
+    public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
@@ -84,28 +85,38 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(dob, user.dob) && Objects.equals(dateCreated, user.dateCreated) && Objects.equals(email, user.email) && role == user.role;
+        return userId == user.userId && username.equals(user.username) && password.equals(user.password) && dob.equals(user.dob) && dateCreated.equals(user.dateCreated) && email.equals(user.email) && role == user.role && displayName.equals(user.displayName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, dob, dateCreated, email, role);
+        return Objects.hash(userId, username, password, dob, dateCreated, email, role, displayName);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", dob='" + dob + '\'' +
-                ", dateCreated='" + dateCreated + '\'' +
+                ", dob=" + dob +
+                ", dateCreated=" + dateCreated +
                 ", email='" + email + '\'' +
                 ", role=" + role +
+                ", displayName='" + displayName + '\'' +
                 '}';
     }
 }

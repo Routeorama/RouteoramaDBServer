@@ -5,26 +5,41 @@ import java.util.Objects;
 
 
 public class Place implements Serializable {
+
     private static final long serialVersionUID = 6529685098267757691L;
     private int id;
     private String name;
     private String description;
-    private String nameOfCreator;
+    private int userId;
+    private int followCount;
     private Location location;
 
-    public Place(int id, String name, String description, String nameOfCreator, Location location) {
+    public Place() {
+        super();
+    }
+
+    public Place(int id, String name, String description, int followCount, int userId, Location location) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.nameOfCreator = nameOfCreator;
+        this.userId = userId;
+        this.followCount = followCount;
         this.location = location;
     }
 
-    public Place(String name, String description, String nameOfCreator, Location location) {
+    public Place(String name, String description, int userId, Location location) {
         this.name = name;
         this.description = description;
-        this.nameOfCreator = nameOfCreator;
+        this.userId = userId;
         this.location = location;
+    }
+
+    public Place(int placeId, String placeName, String description, int followCount, int userid) {
+        this.id = placeId;
+        this.name = placeName;
+        this.description = description;
+        this.followCount = followCount;
+        this.userId = userid;
     }
 
     public int getId() {
@@ -51,12 +66,20 @@ public class Place implements Serializable {
         this.description = description;
     }
 
-    public String getNameOfCreator() {
-        return nameOfCreator;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setNameOfCreator(String nameOfCreator) {
-        this.nameOfCreator = nameOfCreator;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getFollowCount() {
+        return followCount;
+    }
+
+    public void setFollowCount(int followCount) {
+        this.followCount = followCount;
     }
 
     public Location getLocation() {
@@ -72,12 +95,12 @@ public class Place implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Place place = (Place) o;
-        return id == place.id && Objects.equals(name, place.name) && Objects.equals(description, place.description) && Objects.equals(nameOfCreator, place.nameOfCreator) && Objects.equals(location, place.location);
+        return id == place.id && userId == place.userId && followCount == place.followCount && name.equals(place.name) && description.equals(place.description) && location.equals(place.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, nameOfCreator, location);
+        return Objects.hash(id, name, description, userId, followCount, location);
     }
 
     @Override
@@ -86,7 +109,8 @@ public class Place implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", nameOfCreator='" + nameOfCreator + '\'' +
+                ", userId=" + userId +
+                ", followCount=" + followCount +
                 ", location=" + location +
                 '}';
     }

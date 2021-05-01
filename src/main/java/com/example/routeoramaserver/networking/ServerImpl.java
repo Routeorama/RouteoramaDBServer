@@ -37,7 +37,7 @@ public class ServerImpl implements ServerCallback {
     }
 
     // method used to add default users
-    private void addingDefaultUsers(MongoCollection<Document> cookies) {
+    /*private void addingDefaultUsers(MongoCollection<Document> cookies) {
         HashMap<User, Document> mapOfHardUsers = new HashMap<>();
 
         // 1. hardcoded user
@@ -64,7 +64,7 @@ public class ServerImpl implements ServerCallback {
         cookies.drop();
         cookies.insertOne(document);
         cookies.insertOne(document2);
-    }
+    }*/
 
     @Override
     public IUserServerCallback getUserServer() throws RemoteException {
