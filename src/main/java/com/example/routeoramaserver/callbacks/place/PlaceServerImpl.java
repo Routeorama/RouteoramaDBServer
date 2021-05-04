@@ -1,7 +1,6 @@
 package com.example.routeoramaserver.callbacks.place;
 
 import com.example.routeoramaserver.dao.places.IPlaceDAO;
-import com.example.routeoramaserver.dao.places.PlaceDAO;
 import com.example.routeoramaserver.dao.places.PlaceDAOManager;
 import com.example.routeoramaserver.models.Place;
 

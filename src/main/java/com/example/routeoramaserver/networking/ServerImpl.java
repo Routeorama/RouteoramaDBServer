@@ -2,16 +2,14 @@ package com.example.routeoramaserver.networking;
 
 import com.example.routeoramaserver.callbacks.place.IPlaceServerCallback;
 import com.example.routeoramaserver.callbacks.place.PlaceServerImpl;
+import com.example.routeoramaserver.callbacks.place.post.IPostServerCallback;
+import com.example.routeoramaserver.callbacks.place.post.PostServerImpl;
 import com.example.routeoramaserver.callbacks.user.IUserServerCallback;
 import com.example.routeoramaserver.callbacks.user.UserServerImpl;
-import com.example.routeoramaserver.models.User;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -22,6 +20,9 @@ public class ServerImpl implements ServerCallback {
 
     private IPlaceServerCallback placeServerCallback;
     private final Lock lock1 = new ReentrantLock();
+
+    private IPostServerCallback postServerCallback;
+    private final Lock lock2 = new ReentrantLock();
 
     public ServerImpl() {
         try {
@@ -94,5 +95,20 @@ public class ServerImpl implements ServerCallback {
             }
         }
         return placeServerCallback;
+    }
+
+    @Override
+    public IPostServerCallback getPostServer() throws RemoteException {
+        if (postServerCallback == null) {
+            synchronized (lock2) {
+                if (placeServerCallback == null)
+                    try {
+                        postServerCallback = new PostServerImpl();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+            }
+        }
+        return postServerCallback;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class Post implements Serializable {
     private static final long serialVersionUID = 6529685098267757693L;
+    private int userId;
     private int postId;
     private String title;
     private String content;
@@ -14,7 +15,7 @@ public class Post implements Serializable {
     private Date dateOfCreation;
     private int placeId;
 
-    public Post(int postId, String title, String content, String photo, int likeCount, Date dateOfCreation, int placeId) {
+    public Post(int postId,int userId, String title, String content, String photo, int likeCount, Date dateOfCreation, int placeId) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -22,6 +23,15 @@ public class Post implements Serializable {
         this.likeCount = likeCount;
         this.dateOfCreation = dateOfCreation;
         this.placeId = placeId;
+        this.userId = userId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getPostId() {

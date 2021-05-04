@@ -1,6 +1,7 @@
 package com.example.routeoramaserver.networking.callbacks;
 
 import com.example.routeoramaserver.callbacks.place.IPlaceServerCallback;
+import com.example.routeoramaserver.callbacks.place.post.IPostServerCallback;
 import com.example.routeoramaserver.callbacks.user.IUserServerCallback;
 
 
@@ -12,4 +13,5 @@ public interface ServerCallback extends Remote {
     // they're used to fetch the correct interfaces from the DB server
     IUserServerCallback getUserServer() throws RemoteException;
     IPlaceServerCallback getPlaceServer() throws RemoteException;
+    IPostServerCallback getPostServer() throws RemoteException;
 }
