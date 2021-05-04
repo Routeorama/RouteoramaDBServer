@@ -6,4 +6,5 @@ import java.sql.SQLException;
 
 public interface IPlaceDAO {
     Place NewPlace(Place place) throws SQLException;
+    Place GetPlace(String place) throws SQLException;
 }

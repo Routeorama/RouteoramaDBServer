@@ -1,17 +1,13 @@
 package com.example.routeoramaserver.dao.places;
 
 import com.example.routeoramaserver.db.DatabaseConnection;
-import com.example.routeoramaserver.enumClasses.Role;
 import com.example.routeoramaserver.models.Location;
 import com.example.routeoramaserver.models.Place;
-import com.example.routeoramaserver.models.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
 
 public class PlaceDAOManager implements IPlaceDAO {
 
@@ -43,7 +39,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             int m = statement.executeUpdate();
             if (m==1) {
                 System.out.println("Inserted new place successfully");
-                newPlace = getPlace(place);
+                newPlace = GetPlace(place.getName());
                 System.out.println(newPlace);
                 Location location = insertLocation(place.getLocation(), newPlace.getId());
                 newPlace.setLocation(location);
@@ -57,6 +53,43 @@ public class PlaceDAOManager implements IPlaceDAO {
             System.out.println("Place with specified credentials already exists " + ex.getMessage());
         }
         finally {
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return newPlace;
+    }
+
+    @Override
+    public Place GetPlace(String placeName) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Place newPlace = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Place\" WHERE \"name\" = ?");
+            statement.setString(1, placeName);
+            resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                int placeId = resultSet.getInt("placeid");
+                String placeName1 = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                int followCount = resultSet.getInt("followCount");
+                int userid = resultSet.getInt("userid");
+                System.out.println("New place fetched");
+                newPlace = new Place(placeId, placeName1, description, followCount, userid);
+
+                if(newPlace != null) {
+                    newPlace.setLocation(getLocationForThePlace(placeId));
+                }
+            }
+        }
+        catch (SQLException ex) { System.out.println("Get place with specified credentials already exists" + ex.getMessage()); }
+        finally {
+            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
             if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
@@ -97,36 +130,35 @@ public class PlaceDAOManager implements IPlaceDAO {
         return newLocation;
     }
 
-    public Place getPlace(Place place) {
+    private Location getLocationForThePlace(int placeId) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        Place newPlace = null;
+        Location newLocation = null;
 
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("SELECT * FROM \"Place\" WHERE \"name\" = ? AND \"userid\" = ?");
-            statement.setString(1, place.getName());
-            statement.setInt(2, place.getUserId());
+            statement = connection.prepareStatement("SELECT * FROM \"Location\" WHERE \"placeid\" = ?");
+            statement.setInt(1, placeId);
             resultSet = statement.executeQuery();
 
             if(resultSet.next()){
-                int placeId = resultSet.getInt("placeid");
-                String placeName = resultSet.getString("name");
-                String description = resultSet.getString("description");
-                int followCount = resultSet.getInt("followCount");
-                int userid = resultSet.getInt("userid");
-                System.out.println("New place fetched");
-                return newPlace = new Place(placeId, placeName, description, followCount, userid);
+                int lat = resultSet.getInt("lat");
+                int lng = resultSet.getInt("lng");
+                String country = resultSet.getString("country");
+                String city = resultSet.getString("city");
+                System.out.println("New location fetched");
+                newLocation = new Location(lat, lng, country, city);
+                return newLocation;
             }
         }
-        catch (SQLException ex) { System.out.println("Get place with specified credentials already exists" + ex.getMessage()); }
+        catch (SQLException ex) { System.out.println("Get Location with specified credentials already exists" + ex.getMessage()); }
         finally {
             if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
             if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
-        return newPlace;
+        return newLocation;
     }
 }

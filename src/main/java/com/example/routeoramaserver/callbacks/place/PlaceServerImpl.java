@@ -30,4 +30,13 @@ public class PlaceServerImpl implements IPlaceServerCallback {
             throw new RuntimeException("Error creating a new place");
         }
     }
+
+    @Override
+    public Place GetPlace(String placeName) throws RemoteException {
+        try {
+            return placeDAO.GetPlace(placeName);
+        } catch (SQLException throwables) {
+            throw new RuntimeException("Error creating a new place");
+        }
+    }
 }
