@@ -42,8 +42,11 @@ public class PlaceDAOManager implements IPlaceDAO {
                 newPlace = GetPlace(place.getName());
                 System.out.println(newPlace);
                 Location location = insertLocation(place.getLocation(), newPlace.getId());
-                newPlace.setLocation(location);
-                return newPlace;
+                if(location != null) {
+                    newPlace.setLocation(location);
+                    return newPlace;
+                }
+                else return null;
             }
             else
                 System.out.println("Insertion of new place failed");
