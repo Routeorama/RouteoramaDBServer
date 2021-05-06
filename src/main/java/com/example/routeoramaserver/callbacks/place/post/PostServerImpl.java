@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
 public class PostServerImpl implements IPostServerCallback{
-    IPostDAO postDAO;
+    private IPostDAO postDAO;
 
     public PostServerImpl() {
         try {

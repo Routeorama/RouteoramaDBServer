@@ -101,7 +101,7 @@ public class PlaceDAOManager implements IPlaceDAO {
         return newPlace;
     }
 
-    public Location insertLocation(Location location, int placeId) {
+    private Location insertLocation(Location location, int placeId) {
         Connection connection = null;
         PreparedStatement statement = null;
         Location newLocation = null;

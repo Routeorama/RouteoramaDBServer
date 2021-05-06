@@ -7,6 +7,7 @@ import com.example.routeoramaserver.models.Place;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
+import java.util.List;
 
 public class PlaceServerImpl implements IPlaceServerCallback {
 
@@ -36,6 +37,15 @@ public class PlaceServerImpl implements IPlaceServerCallback {
             return placeDAO.GetPlace(placeName);
         } catch (SQLException throwables) {
             throw new RuntimeException("Error creating a new place");
+        }
+    }
+
+    @Override
+    public List<Place> getPlacesInBounds(List<Double> bounds) {
+        try {
+            return placeDAO.getPlacesInBounds(bounds);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching bounds for a place");
         }
     }
 }
