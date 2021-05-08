@@ -101,7 +101,7 @@ public class ServerImpl implements ServerCallback {
     public IPostServerCallback getPostServer() throws RemoteException {
         if (postServerCallback == null) {
             synchronized (lock2) {
-                if (placeServerCallback == null)
+                if (postServerCallback == null)
                     try {
                         postServerCallback = new PostServerImpl();
                     } catch (Exception e) {

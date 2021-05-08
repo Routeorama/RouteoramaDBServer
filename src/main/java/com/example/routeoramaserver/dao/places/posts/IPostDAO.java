@@ -10,5 +10,6 @@ public interface IPostDAO {
     Post NewPost(Post post) throws SQLException;
     boolean DeletePost(int postID) throws SQLException;
     Post GetPost(int postID) throws SQLException;
+    Post GetPost(String title) throws SQLException;
     HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws SQLException;
 }

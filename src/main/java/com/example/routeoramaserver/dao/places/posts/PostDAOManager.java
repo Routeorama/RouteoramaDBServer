@@ -5,6 +5,7 @@ import com.example.routeoramaserver.models.Post;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,7 +27,9 @@ public class PostDAOManager implements IPostDAO {
         PreparedStatement statement = null;
         Post newPost = null;
 
+
         try {
+            System.out.println(post.toString());
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
             statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", \"dateOfCreation\", \"placeid\", \"userid\")" +
@@ -34,6 +37,9 @@ public class PostDAOManager implements IPostDAO {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
             statement.setString(3, post.getPhoto());
+            java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+            post.setDateOfCreation(date);
+
             statement.setDate(4, post.getDateOfCreation());
             statement.setInt(5, post.getPlaceId());
             statement.setInt(6, post.getUserId());
@@ -41,7 +47,7 @@ public class PostDAOManager implements IPostDAO {
             int m = statement.executeUpdate();
             if (m == 1) {
                 System.out.println("Created post successfully");
-                newPost = GetPost(post.getPostId());
+                newPost = GetPost(post.getTitle());
                 System.out.println(newPost);
                 return newPost;
             } else {
@@ -49,7 +55,7 @@ public class PostDAOManager implements IPostDAO {
                 return null;
             }
         } catch (SQLException throwables) {
-            System.out.println("Place with specified credentials already exists" + throwables.getMessage());
+            System.out.println("Post with specified credentials already exists" + throwables.getMessage());
         } finally {
             if (statement != null) try {
                 statement.close();
@@ -92,7 +98,7 @@ public class PostDAOManager implements IPostDAO {
 
         try {
             connection = databaseConnection.getConnection();
-            connection.setSchema("Routeorama");
+            connection.setSchema("Routeourama");
             statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"postid\" = ? ");
             statement.setInt(1, postID);
             resultSet = statement.executeQuery();
@@ -133,6 +139,56 @@ public class PostDAOManager implements IPostDAO {
     }
 
     @Override
+    public Post GetPost(String title) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Post post = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"title\" = ? ");
+            statement.setString(1, title);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int newPostID = resultSet.getInt("postid");
+                String newPostTitle = resultSet.getString("title");
+                String newPostContent = resultSet.getString("content");
+                String newPostPhoto = resultSet.getString("photo");
+                int newPostLikes = resultSet.getInt("likecount");
+                Date newPostDate = resultSet.getDate("dateOfCreation");
+                int newPlaceID = resultSet.getInt("placeid");
+                int newUserID = resultSet.getInt("userid");
+
+                post = new Post(newPostID, newUserID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID);
+            }
+        } catch (SQLException e) {
+            System.out.println("Could not find specified post " + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return post;
+    }
+
+
+    @Override
     public HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -144,11 +200,15 @@ public class PostDAOManager implements IPostDAO {
 
         try {
             connection = databaseConnection.getConnection();
-            connection.setSchema("Routeorama");
-            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ? and \"dateOfCreation\" >= ? and  \"postid\" > ? LIMIT 1;");
+            connection.setSchema("Routeourama");
+//            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ? and \"dateOfCreation\" <= ? and  \"postid\" > ? LIMIT 1;");
+//            statement.setInt(1, placeID);
+//            System.out.println(GetPost(postID).getDateOfCreation()+" this should happen");
+//            statement.setDate(2, GetPost(postID).getDateOfCreation());
+//            statement.setInt(3, postID);
+
+            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ?");
             statement.setInt(1, placeID);
-            statement.setDate(2, GetPost(postID).getDateOfCreation());
-            statement.setInt(3, postID);
             resultSet = statement.executeQuery();
 
             if (resultSet.next()) {

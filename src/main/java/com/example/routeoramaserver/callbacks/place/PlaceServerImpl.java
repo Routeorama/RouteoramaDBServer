@@ -41,7 +41,7 @@ public class PlaceServerImpl implements IPlaceServerCallback {
     }
 
     @Override
-    public List<Place> getPlacesInBounds(List<Double> bounds) {
+    public List<Place> GetPlacesInBounds(List<Double> bounds) {
         try {
             return placeDAO.getPlacesInBounds(bounds);
         } catch (SQLException e) {
