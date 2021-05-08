@@ -7,6 +7,8 @@ import com.example.routeoramaserver.models.Post;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 
 public class PostServerImpl implements IPostServerCallback{
     private IPostDAO postDAO;
@@ -45,6 +47,15 @@ public class PostServerImpl implements IPostServerCallback{
             return postDAO.GetPost(postID);
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching post");
+        }
+    }
+
+    @Override
+    public HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws RemoteException {
+        try{
+            return postDAO.LoadPostsFromChannel(placeID, postID);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching posts");
         }
     }
 }

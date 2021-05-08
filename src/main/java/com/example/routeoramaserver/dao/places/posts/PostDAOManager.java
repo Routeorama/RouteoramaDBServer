@@ -4,6 +4,9 @@ import com.example.routeoramaserver.db.DatabaseConnection;
 import com.example.routeoramaserver.models.Post;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class PostDAOManager implements IPostDAO {
 
@@ -127,5 +130,71 @@ public class PostDAOManager implements IPostDAO {
         }
 
         return post;
+    }
+
+    @Override
+    public HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Post post = null;
+        List<Post> posts = new ArrayList<>();
+        HashMap<Boolean, List<Post>> resultPosts = new HashMap<Boolean, List<Post>>();
+
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeorama");
+            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ? and \"dateOfCreation\" >= ? and  \"postid\" > ? LIMIT 1;");
+            statement.setInt(1, placeID);
+            statement.setDate(2, GetPost(postID).getDateOfCreation());
+            statement.setInt(3, postID);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int newPostID = resultSet.getInt("postid");
+                String newPostTitle = resultSet.getString("title");
+                String newPostContent = resultSet.getString("content");
+                String newPostPhoto = resultSet.getString("photo");
+                int newPostLikes = resultSet.getInt("likecount");
+                Date newPostDate = resultSet.getDate("dateOfCreation");
+                int newPlaceID = resultSet.getInt("placeid");
+                int newUserID = resultSet.getInt("userid");
+
+                post = new Post(newPostID, newUserID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID);
+                posts.add(post);
+            }
+
+            if(posts.size() == 0){
+                resultPosts.put(false, null);
+            }
+            else if(posts.size() > 5){
+                resultPosts.put(true, posts);
+            }
+            else{
+                resultPosts.put(false, posts);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Could not load posts " + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return resultPosts;
     }
 }
