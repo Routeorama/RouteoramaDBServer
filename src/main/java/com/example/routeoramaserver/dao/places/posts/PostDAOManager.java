@@ -225,7 +225,7 @@ public class PostDAOManager implements IPostDAO {
 //            statement.setInt(1, placeID);
 //
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
                 String newPostContent = resultSet.getString("content");
@@ -272,7 +272,7 @@ public class PostDAOManager implements IPostDAO {
                 e.printStackTrace();
             }
         }
-
+        System.out.println(postContainer.getPosts());
         return postContainer;
     }
 }
