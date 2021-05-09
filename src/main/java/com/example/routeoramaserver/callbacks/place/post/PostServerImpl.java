@@ -3,6 +3,7 @@ package com.example.routeoramaserver.callbacks.place.post;
 import com.example.routeoramaserver.dao.places.posts.IPostDAO;
 import com.example.routeoramaserver.dao.places.posts.PostDAOManager;
 import com.example.routeoramaserver.models.Post;
+import com.example.routeoramaserver.models.PostContainer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -51,7 +52,7 @@ public class PostServerImpl implements IPostServerCallback{
     }
 
     @Override
-    public HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws RemoteException {
+    public PostContainer LoadPostsFromChannel(int placeID, int postID) throws RemoteException {
         try{
             return postDAO.LoadPostsFromChannel(placeID, postID);
         } catch (SQLException e) {

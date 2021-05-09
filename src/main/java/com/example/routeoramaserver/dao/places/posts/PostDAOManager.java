@@ -2,6 +2,7 @@ package com.example.routeoramaserver.dao.places.posts;
 
 import com.example.routeoramaserver.db.DatabaseConnection;
 import com.example.routeoramaserver.models.Post;
+import com.example.routeoramaserver.models.PostContainer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -189,27 +190,40 @@ public class PostDAOManager implements IPostDAO {
 
 
     @Override
-    public HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws SQLException {
+    public PostContainer LoadPostsFromChannel(int placeID, int postID) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         Post post = null;
         List<Post> posts = new ArrayList<>();
-        HashMap<Boolean, List<Post>> resultPosts = new HashMap<Boolean, List<Post>>();
+        PostContainer postContainer = new PostContainer();
+        //HashMap<Boolean, List<Post>> resultPosts = new HashMap<Boolean, List<Post>>();
 
 
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-//            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ? and \"dateOfCreation\" <= ? and  \"postid\" > ? LIMIT 1;");
-//            statement.setInt(1, placeID);
-//            System.out.println(GetPost(postID).getDateOfCreation()+" this should happen");
-//            statement.setDate(2, GetPost(postID).getDateOfCreation());
-//            statement.setInt(3, postID);
-
-            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ?");
-            statement.setInt(1, placeID);
+            if(postID == 0 ){
+                statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
+                        "WHERE placeid = ?\n" +
+                        "ORDER BY \"postid\" DESC\n" +
+                        "LIMIT 6;");
+                statement.setInt(1, placeID);
+            } else{
+                statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
+                        "WHERE placeid = ?\n and postid < ?" +
+                        "ORDER BY \"postid\" DESC\n" +
+                        "LIMIT 6;");
+                statement.setInt(1, placeID);
+                statement.setInt(2, postID);
+            }
             resultSet = statement.executeQuery();
+
+
+//
+//            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ?");
+//            statement.setInt(1, placeID);
+//
 
             if (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
@@ -225,14 +239,18 @@ public class PostDAOManager implements IPostDAO {
                 posts.add(post);
             }
 
+
             if(posts.size() == 0){
-                resultPosts.put(false, null);
+                postContainer.setPosts(null);
+                postContainer.setHasMorePosts(false);
             }
             else if(posts.size() > 5){
-                resultPosts.put(true, posts);
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(true);
             }
             else{
-                resultPosts.put(false, posts);
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(false);
             }
 
         } catch (SQLException e) {
@@ -255,6 +273,6 @@ public class PostDAOManager implements IPostDAO {
             }
         }
 
-        return resultPosts;
+        return postContainer;
     }
 }

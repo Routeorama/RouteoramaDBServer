@@ -1,6 +1,7 @@
 package com.example.routeoramaserver.dao.places.posts;
 
 import com.example.routeoramaserver.models.Post;
+import com.example.routeoramaserver.models.PostContainer;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -11,5 +12,5 @@ public interface IPostDAO {
     boolean DeletePost(int postID) throws SQLException;
     Post GetPost(int postID) throws SQLException;
     Post GetPost(String title) throws SQLException;
-    HashMap<Boolean, List<Post>> LoadPostsFromChannel(int placeID, int postID) throws SQLException;
+    PostContainer LoadPostsFromChannel(int placeID, int postID) throws SQLException;
 }
