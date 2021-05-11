@@ -2,6 +2,7 @@ package com.example.routeoramaserver.models;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Post implements Serializable {
@@ -10,12 +11,14 @@ public class Post implements Serializable {
     private int postId;
     private String title;
     private String content;
-    private String photo;
+    //private String photo;
+    private byte[] photo;
     private int likeCount;
     private Date dateOfCreation;
     private int placeId;
 
-    public Post(int postId,int userId, String title, String content, String photo, int likeCount, Date dateOfCreation, int placeId) {
+    public Post(int userId, int postId, String title, String content, byte[] photo, int likeCount, Date dateOfCreation, int placeId) {
+        this.userId = userId;
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -23,7 +26,6 @@ public class Post implements Serializable {
         this.likeCount = likeCount;
         this.dateOfCreation = dateOfCreation;
         this.placeId = placeId;
-        this.userId = userId;
     }
 
     public int getUserId() {
@@ -58,11 +60,11 @@ public class Post implements Serializable {
         this.content = content;
     }
 
-    public String getPhoto() {
+    public byte[] getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 
@@ -95,21 +97,24 @@ public class Post implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && title.equals(post.title) && content.equals(post.content) && Objects.equals(photo, post.photo) && dateOfCreation.equals(post.dateOfCreation);
+        return userId == post.userId && postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && title.equals(post.title) && content.equals(post.content) && Arrays.equals(photo, post.photo) && dateOfCreation.equals(post.dateOfCreation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(postId, title, content, photo, likeCount, dateOfCreation, placeId);
+        int result = Objects.hash(userId, postId, title, content, likeCount, dateOfCreation, placeId);
+        result = 31 * result + Arrays.hashCode(photo);
+        return result;
     }
 
     @Override
     public String toString() {
         return "Post{" +
-                "postId=" + postId +
+                "userId=" + userId +
+                ", postId=" + postId +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", photo='" + photo + '\'' +
+                ", photo=" + Arrays.toString(photo) +
                 ", likeCount=" + likeCount +
                 ", dateOfCreation=" + dateOfCreation +
                 ", placeId=" + placeId +

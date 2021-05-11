@@ -37,7 +37,7 @@ public class PostDAOManager implements IPostDAO {
                     " values (?,?,?,?,?,?)");
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
-            statement.setString(3, post.getPhoto());
+            statement.setBytes(3, post.getPhoto());
             java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
             post.setDateOfCreation(date);
 
@@ -79,10 +79,11 @@ public class PostDAOManager implements IPostDAO {
 
         try {
             connection = databaseConnection.getConnection();
-            connection.setSchema("Routeorama");
+            connection.setSchema("Routeourama");
             statement = connection.prepareStatement("DELETE FROM \"Post\" WHERE \"postid\" = ?");
             statement.setInt(1, postID);
-            statement.executeQuery();
+            statement.executeUpdate();
+            System.out.println("Post deleted.");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,7 +109,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
                 String newPostContent = resultSet.getString("content");
-                String newPostPhoto = resultSet.getString("photo");
+                byte[] newPostPhoto = resultSet.getBytes("photo");
                 int newPostLikes = resultSet.getInt("likecount");
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
@@ -157,7 +158,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
                 String newPostContent = resultSet.getString("content");
-                String newPostPhoto = resultSet.getString("photo");
+                byte[] newPostPhoto = resultSet.getBytes("photo");
                 int newPostLikes = resultSet.getInt("likecount");
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
@@ -229,7 +230,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
                 String newPostContent = resultSet.getString("content");
-                String newPostPhoto = resultSet.getString("photo");
+                byte[] newPostPhoto = resultSet.getBytes("photo");
                 int newPostLikes = resultSet.getInt("likecount");
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
