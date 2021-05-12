@@ -19,8 +19,8 @@ public class PlaceDAOManager implements IPlaceDAO {
     {
         try {
             databaseConnection = DatabaseConnection.getInstance();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Could not connect to database" + e.getMessage());
         }
     }
 
@@ -42,7 +42,6 @@ public class PlaceDAOManager implements IPlaceDAO {
             if (m==1) {
                 System.out.println("Inserted new place successfully");
                 newPlace = GetPlace(place.getName());
-                System.out.println(newPlace);
                 Location location = insertLocation(place.getLocation(), newPlace.getId());
                 if(location != null) {
                     newPlace.setLocation(location);
@@ -51,11 +50,11 @@ public class PlaceDAOManager implements IPlaceDAO {
                 else return null;
             }
             else
-                System.out.println("Insertion of new place failed");
+                System.out.println("Insertion of the new place failed");
 
         }
-        catch (SQLException ex) {
-            System.out.println("Place with specified credentials already exists " + ex.getMessage());
+        catch (SQLException e) {
+            System.out.println("Place already exists " + e.getMessage());
         }
         finally {
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -92,7 +91,7 @@ public class PlaceDAOManager implements IPlaceDAO {
                 }
             }
         }
-        catch (SQLException ex) { System.out.println("Get place with specified credentials already exists" + ex.getMessage()); }
+        catch (SQLException e) { System.out.println("Could not fetch the specified place" + e.getMessage()); }
         finally {
             if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -125,8 +124,8 @@ public class PlaceDAOManager implements IPlaceDAO {
                 System.out.println("Insertion of the new location failed");
 
         }
-        catch (SQLException ex) {
-            System.out.println("Location with specified credentials already exists" + ex.getMessage());
+        catch (SQLException e) {
+            System.out.println("Location with specified credentials already exists" + e.getMessage());
         }
         finally {
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -158,7 +157,7 @@ public class PlaceDAOManager implements IPlaceDAO {
                 return newLocation;
             }
         }
-        catch (SQLException ex) { System.out.println("Get Location with specified credentials already exists" + ex.getMessage()); }
+        catch (SQLException e) { System.out.println("Could not fetch the specified location" + e.getMessage()); }
         finally {
             if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -194,24 +193,23 @@ public class PlaceDAOManager implements IPlaceDAO {
                 String description = resultSet.getString("description");
                 int followCount = resultSet.getInt("followCount");
                 int userid = resultSet.getInt("userid");
-                System.out.println("New place fetched");
                 Place newPlace = new Place(placeid, placeName1, description, followCount, userid);
 
                 double lat = resultSet.getDouble("lat");
                 double lng = resultSet.getDouble("lng");
                 String country = resultSet.getString("country");
                 String city = resultSet.getString("city");
-                System.out.println("New location fetched");
+
 
                 if(newPlace != null) {
                     newPlace.setLocation(new Location(lat, lng, country, city));
                     sendBack.add(newPlace);
                 }
             }
-
+            System.out.println("Places within bounds fetched.");
             return sendBack;
         }
-        catch (SQLException ex) { System.out.println("Get location with specified credentials failed" + ex.getMessage()); }
+        catch (SQLException e) { System.out.println("Could not fetch the places within bounds" + e.getMessage()); }
         finally {
             if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }

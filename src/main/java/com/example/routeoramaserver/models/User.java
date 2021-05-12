@@ -1,7 +1,6 @@
 package com.example.routeoramaserver.models;
 
 import com.example.routeoramaserver.enumClasses.Role;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;

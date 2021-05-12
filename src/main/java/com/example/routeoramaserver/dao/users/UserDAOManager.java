@@ -19,13 +19,13 @@ public class UserDAOManager implements IUserDAO {
     {
         try {
             databaseConnection = DatabaseConnection.getInstance();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Could not connect to database" + e.getMessage());
         }
     }
 
     @Override
-    public User login(String username, String password) {
+    public User Login(String username, String password) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -49,10 +49,11 @@ public class UserDAOManager implements IUserDAO {
                 String role = resultSet.getString("role");
                 Date date = resultSet.getDate("datecreated");
 
-                user = new User(userId, username, "", dob, Role.valueOf(role), displayName, date, email);
+                user = new User(userId, username, password1, dob, Role.valueOf(role), displayName, date, email);
+                //TODO encrypt the password
             }
         }
-        catch (SQLException ex) { ex.printStackTrace(); }
+        catch (SQLException ex) { System.out.println("Could not validate the login" + ex.getMessage()); }
         finally {
             if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
             if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
@@ -63,11 +64,11 @@ public class UserDAOManager implements IUserDAO {
 
     @Override
     public void logout() {
-
+        //TODO logout
     }
 
     @Override
-    public boolean register(User user) {
+    public boolean Register(User user) {
         Connection connection = null;
         PreparedStatement statement = null;
 
@@ -90,11 +91,11 @@ public class UserDAOManager implements IUserDAO {
 
             int m = statement.executeUpdate();
             if (m==1) {
-                System.out.println("Inserted successfully");
+                System.out.println("User inserted successfully");
                 return true;
             }
             else
-                System.out.println("Insertion failed");
+                System.out.println("User insertion failed");
 
         }
         catch (SQLException ex) {

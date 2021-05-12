@@ -11,7 +11,6 @@ public class Post implements Serializable {
     private int postId;
     private String title;
     private String content;
-    //private String photo;
     private byte[] photo;
     private int likeCount;
     private Date dateOfCreation;

@@ -27,12 +27,10 @@ public class ServerImpl implements ServerCallback {
     public ServerImpl() {
         try {
             UnicastRemoteObject.exportObject(this, 0);
-
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public IUserServerCallback getUserServer() throws RemoteException {

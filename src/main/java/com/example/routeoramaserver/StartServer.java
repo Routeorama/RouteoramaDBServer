@@ -1,10 +1,7 @@
 package com.example.routeoramaserver;
 
-import com.example.routeoramaserver.models.Location;
-import com.example.routeoramaserver.models.Place;
 import com.example.routeoramaserver.networking.ServerImpl;
 import com.example.routeoramaserver.networking.callbacks.ServerCallback;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;

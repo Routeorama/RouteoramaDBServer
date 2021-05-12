@@ -7,7 +7,6 @@ import java.sql.SQLException;
 public class DatabaseConnection
 {
     private static DatabaseConnection instance;
-    private String plswork = "jdbc:postgresql://mpkvuqcd:yzVzTqine2R5KdQ68eIWN7epbsrdXYlI@dumbo.db.elephantsql.com:5432/mpkvuqcd?currentSchema=Routeourama";
     private String url = "jdbc:postgresql://dumbo.db.elephantsql.com:5432/mpkvuqcd";
     private String username = "mpkvuqcd";
     private String password = "yzVzTqine2R5KdQ68eIWN7epbsrdXYlI";

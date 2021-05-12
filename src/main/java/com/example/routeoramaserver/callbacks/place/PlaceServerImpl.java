@@ -19,14 +19,13 @@ public class PlaceServerImpl implements IPlaceServerCallback {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
         placeDAO = new PlaceDAOManager();
     }
     @Override
-    public Place NewPlace(Place place) {
+    public Place NewPlace(Place place) throws RemoteException{
         try {
             return placeDAO.NewPlace(place);
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
             throw new RuntimeException("Error creating a new place");
         }
     }
@@ -35,13 +34,13 @@ public class PlaceServerImpl implements IPlaceServerCallback {
     public Place GetPlace(String placeName) throws RemoteException {
         try {
             return placeDAO.GetPlace(placeName);
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
             throw new RuntimeException("Error creating a new place");
         }
     }
 
     @Override
-    public List<Place> GetPlacesInBounds(List<Double> bounds) {
+    public List<Place> GetPlacesInBounds(List<Double> bounds) throws RemoteException {
         try {
             return placeDAO.getPlacesInBounds(bounds);
         } catch (SQLException e) {

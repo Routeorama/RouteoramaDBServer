@@ -7,7 +7,6 @@ import com.example.routeoramaserver.models.PostContainer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 public class PostDAOManager implements IPostDAO {
@@ -17,8 +16,8 @@ public class PostDAOManager implements IPostDAO {
     public PostDAOManager() {
         try {
             databaseConnection = DatabaseConnection.getInstance();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Could not connect to database" + e.getMessage());
         }
     }
 
@@ -28,9 +27,7 @@ public class PostDAOManager implements IPostDAO {
         PreparedStatement statement = null;
         Post newPost = null;
 
-
         try {
-            System.out.println(post.toString());
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
             statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", \"dateOfCreation\", \"placeid\", \"userid\")" +
@@ -49,14 +46,13 @@ public class PostDAOManager implements IPostDAO {
             if (m == 1) {
                 System.out.println("Created post successfully");
                 newPost = GetPost(post.getTitle());
-                System.out.println(newPost);
                 return newPost;
             } else {
                 System.out.println("Post creation failed");
                 return null;
             }
-        } catch (SQLException throwables) {
-            System.out.println("Post with specified credentials already exists" + throwables.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Post already exists" + e.getMessage());
         } finally {
             if (statement != null) try {
                 statement.close();
@@ -86,7 +82,7 @@ public class PostDAOManager implements IPostDAO {
             System.out.println("Post deleted.");
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Failed to delete the post" + e.getMessage());
         }
         return false;
     }
@@ -198,8 +194,6 @@ public class PostDAOManager implements IPostDAO {
         Post post = null;
         List<Post> posts = new ArrayList<>();
         PostContainer postContainer = new PostContainer();
-        //HashMap<Boolean, List<Post>> resultPosts = new HashMap<Boolean, List<Post>>();
-
 
         try {
             connection = databaseConnection.getConnection();
@@ -219,12 +213,6 @@ public class PostDAOManager implements IPostDAO {
                 statement.setInt(2, postID);
             }
             resultSet = statement.executeQuery();
-
-
-//
-//            statement = connection.prepareStatement("SELECT * FROM \"Post\" WHERE \"placeid\" = ?");
-//            statement.setInt(1, placeID);
-//
 
             while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
@@ -246,6 +234,7 @@ public class PostDAOManager implements IPostDAO {
                 postContainer.setHasMorePosts(false);
             }
             else if(posts.size() > 5){
+                posts.remove(5);
                 postContainer.setPosts(posts);
                 postContainer.setHasMorePosts(true);
             }
@@ -273,7 +262,6 @@ public class PostDAOManager implements IPostDAO {
                 e.printStackTrace();
             }
         }
-        System.out.println(postContainer.getPosts());
         return postContainer;
     }
 }

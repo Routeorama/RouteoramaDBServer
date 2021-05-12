@@ -8,13 +8,11 @@ import com.example.routeoramaserver.models.PostContainer;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 public class PostServerImpl implements IPostServerCallback{
     private IPostDAO postDAO;
 
-    public PostServerImpl() {
+    public PostServerImpl(){
         try {
             UnicastRemoteObject.exportObject(this, 0);
         } catch (RemoteException e) {

@@ -4,8 +4,6 @@ import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
 
 public interface IPostDAO {
     Post NewPost(Post post) throws SQLException;

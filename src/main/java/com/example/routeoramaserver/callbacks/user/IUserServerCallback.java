@@ -4,6 +4,7 @@ import com.example.routeoramaserver.models.User;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 
 /*
  * server interface for RMI client to call methods on server (this)
