@@ -30,8 +30,8 @@ public class PostDAOManager implements IPostDAO {
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", \"dateOfCreation\", \"placeid\", \"userid\")" +
-                    " values (?,?,?,?,?,?)");
+            statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", \"dateOfCreation\", \"placeid\", \"userid\", \"photoType\")" +
+                    " values (?,?,?,?,?,?,?)");
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
             statement.setBytes(3, post.getPhoto());
@@ -41,7 +41,7 @@ public class PostDAOManager implements IPostDAO {
             statement.setDate(4, post.getDateOfCreation());
             statement.setInt(5, post.getPlaceId());
             statement.setInt(6, post.getUserId());
-
+            statement.setString(7, post.getPhotoType());
             int m = statement.executeUpdate();
             if (m == 1) {
                 System.out.println("Created post successfully");
@@ -110,8 +110,8 @@ public class PostDAOManager implements IPostDAO {
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
-
-                post = new Post(newPostID, newUserID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID);
+                String photoType = resultSet.getString("photoType");
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -159,8 +159,8 @@ public class PostDAOManager implements IPostDAO {
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
-
-                post = new Post(newPostID, newUserID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID);
+                String photoType = resultSet.getString("photoType");
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -223,8 +223,9 @@ public class PostDAOManager implements IPostDAO {
                 Date newPostDate = resultSet.getDate("dateOfCreation");
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
+                String photoType = resultSet.getString("photoType");
 
-                post = new Post(newPostID, newUserID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
                 posts.add(post);
             }
 

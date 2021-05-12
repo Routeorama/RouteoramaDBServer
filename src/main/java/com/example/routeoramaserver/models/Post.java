@@ -15,8 +15,9 @@ public class Post implements Serializable {
     private int likeCount;
     private Date dateOfCreation;
     private int placeId;
+    private String photoType;
 
-    public Post(int userId, int postId, String title, String content, byte[] photo, int likeCount, Date dateOfCreation, int placeId) {
+    public Post(int userId, int postId, String title, String content, byte[] photo, int likeCount, Date dateOfCreation, int placeId, String photoType) {
         this.userId = userId;
         this.postId = postId;
         this.title = title;
@@ -25,6 +26,7 @@ public class Post implements Serializable {
         this.likeCount = likeCount;
         this.dateOfCreation = dateOfCreation;
         this.placeId = placeId;
+        this.photoType = photoType;
     }
 
     public int getUserId() {
@@ -91,17 +93,25 @@ public class Post implements Serializable {
         this.placeId = placeId;
     }
 
+    public String getPhotoType() {
+        return photoType;
+    }
+
+    public void setPhotoType(String photoType) {
+        this.photoType = photoType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return userId == post.userId && postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && title.equals(post.title) && content.equals(post.content) && Arrays.equals(photo, post.photo) && dateOfCreation.equals(post.dateOfCreation);
+        return userId == post.userId && postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(photoType, post.photoType) && Arrays.equals(photo, post.photo) && Objects.equals(dateOfCreation, post.dateOfCreation);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(userId, postId, title, content, likeCount, dateOfCreation, placeId);
+        int result = Objects.hash(userId, postId, title, content, photoType, likeCount, dateOfCreation, placeId);
         result = 31 * result + Arrays.hashCode(photo);
         return result;
     }
@@ -113,6 +123,7 @@ public class Post implements Serializable {
                 ", postId=" + postId +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", photoType='" + photoType + '\'' +
                 ", photo=" + Arrays.toString(photo) +
                 ", likeCount=" + likeCount +
                 ", dateOfCreation=" + dateOfCreation +
