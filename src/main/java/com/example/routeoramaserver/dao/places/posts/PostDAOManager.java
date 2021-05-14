@@ -111,7 +111,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -160,7 +160,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -197,13 +197,13 @@ public class PostDAOManager implements IPostDAO {
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-            if(postID == 0 ){
+            if (postID == 0) {
                 statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
                         "WHERE placeid = ?\n" +
                         "ORDER BY \"postid\" DESC\n" +
                         "LIMIT 6;");
                 statement.setInt(1, placeID);
-            } else{
+            } else {
                 statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
                         "WHERE placeid = ?\n and postid < ?" +
                         "ORDER BY \"postid\" DESC\n" +
@@ -224,21 +224,19 @@ public class PostDAOManager implements IPostDAO {
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
 
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent,newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
                 posts.add(post);
             }
 
 
-            if(posts.size() == 0){
+            if (posts.size() == 0) {
                 postContainer.setPosts(null);
                 postContainer.setHasMorePosts(false);
-            }
-            else if(posts.size() > 5){
+            } else if (posts.size() > 5) {
                 posts.remove(5);
                 postContainer.setPosts(posts);
                 postContainer.setHasMorePosts(true);
-            }
-            else{
+            } else {
                 postContainer.setPosts(posts);
                 postContainer.setHasMorePosts(false);
             }
@@ -270,7 +268,7 @@ public class PostDAOManager implements IPostDAO {
         Connection connection = null;
         PreparedStatement statement = null;
 
-        if(!IsAlreadyLiked(postId, userId)) {
+        if (!IsAlreadyLiked(postId, userId)) {
 
             try {
                 connection = databaseConnection.getConnection();
@@ -302,8 +300,7 @@ public class PostDAOManager implements IPostDAO {
                 }
             }
             return true;
-        }
-        else {
+        } else {
 
             try {
                 connection = databaseConnection.getConnection();
@@ -349,25 +346,40 @@ public class PostDAOManager implements IPostDAO {
             connection.setSchema("Routeourama");
             statement = connection.prepareStatement("SELECT * FROM \"Likes\" WHERE \"userid\" = ? AND \"postid\" = ?");
             statement.setInt(1, userId);
-            statement.setInt(1, postId);
+            statement.setInt(2, postId);
             resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 int userid = resultSet.getInt("userid");
-                int postid = resultSet.getInt("placeid");
-
-                if(postId == postid && userId == userid) {
-                    System.out.println("User liked the place already");
+                int postid = resultSet.getInt("postid");
+                if (postId == postid && userId == userid) {
+                    System.out.println("User liked the post already");
                     return true;
+                } else {
+                    System.out.println("User did not like the post");
+                    return false;
                 }
+            } else {
+                System.out.println("Result set was null");
             }
-            System.out.println("User did not like the place");
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the likes for user" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the likes for user" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

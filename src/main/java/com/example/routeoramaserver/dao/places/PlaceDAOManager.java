@@ -344,7 +344,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             connection.setSchema("Routeourama");
             statement = connection.prepareStatement("SELECT * FROM \"Follow\" WHERE \"userid\" = ? AND \"placeid\" = ?");
             statement.setInt(1, userId);
-            statement.setInt(1, placeId);
+            statement.setInt(2, placeId);
             resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
