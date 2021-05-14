@@ -57,4 +57,22 @@ public class PostServerImpl implements IPostServerCallback{
             throw new RuntimeException("Error fetching posts");
         }
     }
+
+    @Override
+    public boolean LikeThePost(int postId, int userId) throws RemoteException {
+        try {
+            return postDAO.LikeThePost(postId, userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error liking the post");
+        }
+    }
+
+    @Override
+    public boolean IsAlreadyLiked(int postId, int userId) throws RemoteException {
+        try {
+            return postDAO.IsAlreadyLiked(postId,userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error isAlreadyLiked post");
+        }
+    }
 }

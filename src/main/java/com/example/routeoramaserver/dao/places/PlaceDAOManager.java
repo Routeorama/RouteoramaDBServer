@@ -24,6 +24,72 @@ public class PlaceDAOManager implements IPlaceDAO {
         }
     }
 
+    private Location getLocationForThePlace(int placeId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Location newLocation = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Location\" WHERE \"placeid\" = ?");
+            statement.setInt(1, placeId);
+            resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                int lat = resultSet.getInt("lat");
+                int lng = resultSet.getInt("lng");
+                String country = resultSet.getString("country");
+                String city = resultSet.getString("city");
+                System.out.println("New location fetched");
+                newLocation = new Location(lat, lng, country, city);
+                return newLocation;
+            }
+        }
+        catch (SQLException e) { System.out.println("Could not fetch the specified location" + e.getMessage()); }
+        finally {
+            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return newLocation;
+    }
+
+    private Location insertLocation(Location location, int placeId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        Location newLocation = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("INSERT INTO \"Location\" (\"lat\", \"lng\", \"country\", \"city\", \"placeid\")" +
+                    " values (?,?,?,?,?)");
+            statement.setDouble(1, location.getLat());
+            statement.setDouble(2, location.getLng());
+            statement.setString(3, location.getCountry());
+            statement.setString(4, location.getCity());
+            statement.setInt(5, placeId);
+            int m = statement.executeUpdate();
+            if (m==1) {
+                System.out.println("Inserted new location successfully");
+                return location;
+            }
+            else
+                System.out.println("Insertion of the new location failed");
+
+        }
+        catch (SQLException e) {
+            System.out.println("Location with specified credentials already exists" + e.getMessage());
+        }
+        finally {
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return newLocation;
+    }
+
     @Override
     public Place NewPlace(Place place) {
         Connection connection = null;
@@ -100,72 +166,6 @@ public class PlaceDAOManager implements IPlaceDAO {
         return newPlace;
     }
 
-    private Location insertLocation(Location location, int placeId) {
-        Connection connection = null;
-        PreparedStatement statement = null;
-        Location newLocation = null;
-
-        try {
-            connection = databaseConnection.getConnection();
-            connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("INSERT INTO \"Location\" (\"lat\", \"lng\", \"country\", \"city\", \"placeid\")" +
-                    " values (?,?,?,?,?)");
-            statement.setDouble(1, location.getLat());
-            statement.setDouble(2, location.getLng());
-            statement.setString(3, location.getCountry());
-            statement.setString(4, location.getCity());
-            statement.setInt(5, placeId);
-            int m = statement.executeUpdate();
-            if (m==1) {
-                System.out.println("Inserted new location successfully");
-                return location;
-            }
-            else
-                System.out.println("Insertion of the new location failed");
-
-        }
-        catch (SQLException e) {
-            System.out.println("Location with specified credentials already exists" + e.getMessage());
-        }
-        finally {
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
-        }
-        return newLocation;
-    }
-
-    private Location getLocationForThePlace(int placeId) {
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        Location newLocation = null;
-
-        try {
-            connection = databaseConnection.getConnection();
-            connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("SELECT * FROM \"Location\" WHERE \"placeid\" = ?");
-            statement.setInt(1, placeId);
-            resultSet = statement.executeQuery();
-
-            if(resultSet.next()){
-                int lat = resultSet.getInt("lat");
-                int lng = resultSet.getInt("lng");
-                String country = resultSet.getString("country");
-                String city = resultSet.getString("city");
-                System.out.println("New location fetched");
-                newLocation = new Location(lat, lng, country, city);
-                return newLocation;
-            }
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the specified location" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
-        }
-        return newLocation;
-    }
-
     @Override
     public List<Place> getPlacesInBounds(List<Double> bounds) {
         double latSW = bounds.get(1), lngSW = bounds.get(0), latNE = bounds.get(3), lngNE = bounds.get(2);
@@ -216,5 +216,68 @@ public class PlaceDAOManager implements IPlaceDAO {
             if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
         return sendBack;
+    }
+
+    @Override
+    public boolean FollowThePlace(int placeId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("INSERT INTO \"Follow\" VALUES (?,?)");
+            statement.setInt(1, userId);
+            statement.setInt(2, placeId);
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Creating follow request failed");
+                return false;
+            }
+
+            System.out.println("Follow request successfully executed");
+        }
+        catch (SQLException e) { System.out.println("Creating follow request failed" + e.getMessage()); }
+        finally {
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean IsAlreadyFollowed(int placeId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Follow\" WHERE \"userid\" = ? AND \"placeid\" = ?");
+            statement.setInt(1, userId);
+            statement.setInt(1, placeId);
+            resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                int userid = resultSet.getInt("userid");
+                int placeid = resultSet.getInt("placeid");
+
+                if(placeId == placeid && userId == userid) {
+                    System.out.println("User is following the place already");
+                    return true;
+                }
+            }
+            System.out.println("User is not following the place");
+        }
+        catch (SQLException e) { System.out.println("Could not fetch the follow for user" + e.getMessage()); }
+        finally {
+            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return false;
     }
 }

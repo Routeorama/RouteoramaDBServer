@@ -185,9 +185,8 @@ public class PostDAOManager implements IPostDAO {
         return post;
     }
 
-
     @Override
-    public PostContainer LoadPostsFromChannel(int placeID, int postID) throws SQLException {
+    public PostContainer LoadPostsFromChannel(int placeID, int postID) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -264,5 +263,68 @@ public class PostDAOManager implements IPostDAO {
             }
         }
         return postContainer;
+    }
+
+    @Override
+    public boolean LikeThePost(int postId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("INSERT INTO \"Likes\" VALUES (?,?)");
+            statement.setInt(1, userId);
+            statement.setInt(2, postId);
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Creating like request failed");
+                return false;
+            }
+
+            System.out.println("Like request successfully executed");
+        }
+        catch (SQLException e) { System.out.println("Creating like request failed" + e.getMessage()); }
+        finally {
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean IsAlreadyLiked(int postId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Likes\" WHERE \"userid\" = ? AND \"postid\" = ?");
+            statement.setInt(1, userId);
+            statement.setInt(1, postId);
+            resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                int userid = resultSet.getInt("userid");
+                int postid = resultSet.getInt("placeid");
+
+                if(postId == postid && userId == userid) {
+                    System.out.println("User liked the place already");
+                    return true;
+                }
+            }
+            System.out.println("User did not like the place");
+        }
+        catch (SQLException e) { System.out.println("Could not fetch the likes for user" + e.getMessage()); }
+        finally {
+            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return false;
     }
 }

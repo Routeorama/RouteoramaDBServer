@@ -8,7 +8,7 @@ import java.util.Objects;
 public class PostContainer implements Serializable {
     private static final long serialVersionUID = 6529685098267757694L;
     private boolean hasMorePosts;
-    private List<Post> posts = new ArrayList<>();;
+    private List<Post> posts = new ArrayList<>();
 
     public PostContainer() {
     }

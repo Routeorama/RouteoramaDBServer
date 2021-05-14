@@ -21,6 +21,7 @@ public class PlaceServerImpl implements IPlaceServerCallback {
         }
         placeDAO = new PlaceDAOManager();
     }
+
     @Override
     public Place NewPlace(Place place) throws RemoteException{
         try {
@@ -45,6 +46,24 @@ public class PlaceServerImpl implements IPlaceServerCallback {
             return placeDAO.getPlacesInBounds(bounds);
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching bounds for a place");
+        }
+    }
+
+    @Override
+    public boolean FollowThePlace(int placeId, int userId) throws RemoteException {
+        try {
+            return placeDAO.FollowThePlace(placeId,userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error following the place");
+        }
+    }
+
+    @Override
+    public boolean IsAlreadyFollowed(int placeId, int userId) throws RemoteException {
+        try {
+            return placeDAO.IsAlreadyFollowed(placeId,userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error isAlreadyFollowed place");
         }
     }
 }
