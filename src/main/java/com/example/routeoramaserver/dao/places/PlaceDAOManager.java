@@ -15,8 +15,7 @@ public class PlaceDAOManager implements IPlaceDAO {
 
     private DatabaseConnection databaseConnection;
 
-    public PlaceDAOManager()
-    {
+    public PlaceDAOManager() {
         try {
             databaseConnection = DatabaseConnection.getInstance();
         } catch (SQLException e) {
@@ -37,7 +36,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setInt(1, placeId);
             resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 int lat = resultSet.getInt("lat");
                 int lng = resultSet.getInt("lng");
                 String country = resultSet.getString("country");
@@ -46,12 +45,24 @@ public class PlaceDAOManager implements IPlaceDAO {
                 newLocation = new Location(lat, lng, country, city);
                 return newLocation;
             }
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the specified location" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the specified location" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return newLocation;
     }
@@ -72,20 +83,25 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setString(4, location.getCity());
             statement.setInt(5, placeId);
             int m = statement.executeUpdate();
-            if (m==1) {
+            if (m == 1) {
                 System.out.println("Inserted new location successfully");
                 return location;
-            }
-            else
+            } else
                 System.out.println("Insertion of the new location failed");
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Location with specified credentials already exists" + e.getMessage());
-        }
-        finally {
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return newLocation;
     }
@@ -105,26 +121,30 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setString(2, place.getDescription());
             statement.setInt(3, place.getUserId());
             int m = statement.executeUpdate();
-            if (m==1) {
+            if (m == 1) {
                 System.out.println("Inserted new place successfully");
                 newPlace = GetPlace(place.getName());
                 Location location = insertLocation(place.getLocation(), newPlace.getId());
-                if(location != null) {
+                if (location != null) {
                     newPlace.setLocation(location);
                     return newPlace;
-                }
-                else return null;
-            }
-            else
+                } else return null;
+            } else
                 System.out.println("Insertion of the new place failed");
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Place already exists " + e.getMessage());
-        }
-        finally {
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return newPlace;
     }
@@ -143,7 +163,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setString(1, placeName);
             resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 int placeId = resultSet.getInt("placeid");
                 String placeName1 = resultSet.getString("name");
                 String description = resultSet.getString("description");
@@ -152,16 +172,28 @@ public class PlaceDAOManager implements IPlaceDAO {
                 System.out.println("New place fetched");
                 newPlace = new Place(placeId, placeName1, description, followCount, userid);
 
-                if(newPlace != null) {
+                if (newPlace != null) {
                     newPlace.setLocation(getLocationForThePlace(placeId));
                 }
             }
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the specified place" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the specified place" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return newPlace;
     }
@@ -187,7 +219,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setDouble(4, lngNE);
             resultSet = statement.executeQuery();
 
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 int placeid = resultSet.getInt("placeid");
                 String placeName1 = resultSet.getString("name");
                 String description = resultSet.getString("description");
@@ -201,19 +233,31 @@ public class PlaceDAOManager implements IPlaceDAO {
                 String city = resultSet.getString("city");
 
 
-                if(newPlace != null) {
+                if (newPlace != null) {
                     newPlace.setLocation(new Location(lat, lng, country, city));
                     sendBack.add(newPlace);
                 }
             }
             System.out.println("Places within bounds fetched.");
             return sendBack;
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the places within bounds" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the places within bounds" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return sendBack;
     }
@@ -223,26 +267,37 @@ public class PlaceDAOManager implements IPlaceDAO {
         Connection connection = null;
         PreparedStatement statement = null;
 
-        try {
-            connection = databaseConnection.getConnection();
-            connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("INSERT INTO \"Follow\" VALUES (?,?)");
-            statement.setInt(1, userId);
-            statement.setInt(2, placeId);
+        if (!IsAlreadyFollowed(placeId, userId)) {
 
-            int affectedRows = statement.executeUpdate();
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("INSERT INTO \"Follow\" VALUES (?,?)");
+                statement.setInt(1, userId);
+                statement.setInt(2, placeId);
 
-            if (affectedRows == 0) {
-                System.out.println("Creating follow request failed");
-                return false;
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    System.out.println("Creating follow request failed");
+                    return false;
+                }
+
+                System.out.println("Follow request successfully executed");
+            } catch (SQLException e) {
+                System.out.println("Creating follow request failed" + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            System.out.println("Follow request successfully executed");
-        }
-        catch (SQLException e) { System.out.println("Creating follow request failed" + e.getMessage()); }
-        finally {
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
         return true;
     }
@@ -261,22 +316,34 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setInt(1, placeId);
             resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 int userid = resultSet.getInt("userid");
                 int placeid = resultSet.getInt("placeid");
 
-                if(placeId == placeid && userId == userid) {
+                if (placeId == placeid && userId == userid) {
                     System.out.println("User is following the place already");
                     return true;
                 }
             }
             System.out.println("User is not following the place");
-        }
-        catch (SQLException e) { System.out.println("Could not fetch the follow for user" + e.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the follow for user" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

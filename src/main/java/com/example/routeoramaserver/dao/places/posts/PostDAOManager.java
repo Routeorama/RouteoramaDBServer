@@ -270,26 +270,37 @@ public class PostDAOManager implements IPostDAO {
         Connection connection = null;
         PreparedStatement statement = null;
 
-        try {
-            connection = databaseConnection.getConnection();
-            connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("INSERT INTO \"Likes\" VALUES (?,?)");
-            statement.setInt(1, userId);
-            statement.setInt(2, postId);
+        if(!IsAlreadyLiked(postId, userId)) {
 
-            int affectedRows = statement.executeUpdate();
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("INSERT INTO \"Likes\" VALUES (?,?)");
+                statement.setInt(1, userId);
+                statement.setInt(2, postId);
 
-            if (affectedRows == 0) {
-                System.out.println("Creating like request failed");
-                return false;
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    System.out.println("Creating like request failed");
+                    return false;
+                }
+
+                System.out.println("Like request successfully executed");
+            } catch (SQLException e) {
+                System.out.println("Creating like request failed" + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            System.out.println("Like request successfully executed");
-        }
-        catch (SQLException e) { System.out.println("Creating like request failed" + e.getMessage()); }
-        finally {
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
         return true;
     }
