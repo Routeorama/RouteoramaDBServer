@@ -301,8 +301,41 @@ public class PostDAOManager implements IPostDAO {
                     e.printStackTrace();
                 }
             }
+            return true;
         }
-        return true;
+        else {
+
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"postid\" = ?");
+                statement.setInt(1, userId);
+                statement.setInt(2, postId);
+
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    System.out.println("unlike request failed");
+                    return true;
+                }
+
+                System.out.println("Unlike request successfully executed");
+            } catch (SQLException e) {
+                System.out.println("Deleting unlike request failed" + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
     }
 
     @Override

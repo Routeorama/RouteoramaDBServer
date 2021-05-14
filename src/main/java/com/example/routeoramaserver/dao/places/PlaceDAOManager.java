@@ -268,7 +268,6 @@ public class PlaceDAOManager implements IPlaceDAO {
         PreparedStatement statement = null;
 
         if (!IsAlreadyFollowed(placeId, userId)) {
-
             try {
                 connection = databaseConnection.getConnection();
                 connection.setSchema("Routeourama");
@@ -298,8 +297,40 @@ public class PlaceDAOManager implements IPlaceDAO {
                     e.printStackTrace();
                 }
             }
+            return true;
         }
-        return true;
+        else {
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"placeid\" = ?");
+                statement.setInt(1, userId);
+                statement.setInt(2, placeId);
+
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows == 0) {
+                    System.out.println("Unfollow request failed");
+                    return true;
+                }
+
+                System.out.println("Unfollow request successfully executed");
+            } catch (SQLException e) {
+                System.out.println("Deleting follow request failed" + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
     }
 
     @Override
