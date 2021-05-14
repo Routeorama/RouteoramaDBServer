@@ -10,6 +10,7 @@ public interface IPostServerCallback extends Remote {
     boolean DeletePost(int postID) throws RemoteException;
     Post GetPost(int postID) throws RemoteException;
     PostContainer LoadPostsFromChannel(int placeID, int postID) throws RemoteException;
-    boolean LikeThePost(int postId, int userId) throws RemoteException;
-    boolean IsAlreadyLiked(int postId, int userId) throws RemoteException;
+    void LikeThePost(int postId, int userId) throws RemoteException;
+    void UnlikeThePost(int postId, int userId) throws RemoteException;
+    void IsAlreadyLiked(int postId, int userId) throws RemoteException;
 }

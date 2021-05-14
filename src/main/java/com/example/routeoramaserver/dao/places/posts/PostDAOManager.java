@@ -264,7 +264,7 @@ public class PostDAOManager implements IPostDAO {
     }
 
     @Override
-    public boolean LikeThePost(int postId, int userId) {
+    public void LikeThePost(int postId, int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
 
@@ -281,10 +281,9 @@ public class PostDAOManager implements IPostDAO {
 
                 if (affectedRows == 0) {
                     System.out.println("Creating like request failed");
-                    return false;
-                }
+                } else
+                    System.out.println("Like request successfully executed");
 
-                System.out.println("Like request successfully executed");
             } catch (SQLException e) {
                 System.out.println("Creating like request failed" + e.getMessage());
             } finally {
@@ -299,39 +298,41 @@ public class PostDAOManager implements IPostDAO {
                     e.printStackTrace();
                 }
             }
-            return true;
-        } else {
+        }
+    }
 
-            try {
-                connection = databaseConnection.getConnection();
-                connection.setSchema("Routeourama");
-                statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"postid\" = ?");
-                statement.setInt(1, userId);
-                statement.setInt(2, postId);
+    @Override
+    public void UnlikeThePost(int postId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
 
-                int affectedRows = statement.executeUpdate();
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"postid\" = ?");
+            statement.setInt(1, userId);
+            statement.setInt(2, postId);
 
-                if (affectedRows == 0) {
-                    System.out.println("unlike request failed");
-                    return true;
-                }
+            int affectedRows = statement.executeUpdate();
 
+            if (affectedRows == 0) {
+                System.out.println("unlike request failed");
+            } else
                 System.out.println("Unlike request successfully executed");
-            } catch (SQLException e) {
-                System.out.println("Deleting unlike request failed" + e.getMessage());
-            } finally {
-                if (statement != null) try {
-                    statement.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (connection != null) try {
-                    connection.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+        } catch (SQLException e) {
+            System.out.println("Deleting unlike request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return false;
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

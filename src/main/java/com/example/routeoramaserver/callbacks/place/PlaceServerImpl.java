@@ -50,9 +50,18 @@ public class PlaceServerImpl implements IPlaceServerCallback {
     }
 
     @Override
-    public boolean FollowThePlace(int placeId, int userId) throws RemoteException {
+    public void FollowThePlace(int placeId, int userId) throws RemoteException {
         try {
-            return placeDAO.FollowThePlace(placeId,userId);
+            placeDAO.FollowThePlace(placeId,userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error following the place");
+        }
+    }
+
+    @Override
+    public void UnfollowThePlace(int placeId, int userId) throws RemoteException {
+        try {
+            placeDAO.UnfollowThePlace(placeId,userId);
         } catch (SQLException e) {
             throw new RuntimeException("Error following the place");
         }

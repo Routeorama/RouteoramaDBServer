@@ -11,6 +11,7 @@ public interface IPostDAO {
     Post GetPost(int postID) throws SQLException;
     Post GetPost(String title) throws SQLException;
     PostContainer LoadPostsFromChannel(int placeID, int postID) throws SQLException;
-    boolean LikeThePost(int postId, int userId) throws SQLException;
+    void LikeThePost(int postId, int userId) throws SQLException;
+    void UnlikeThePost(int postId, int userId) throws SQLException;
     boolean IsAlreadyLiked(int postId, int userId) throws SQLException;
 }

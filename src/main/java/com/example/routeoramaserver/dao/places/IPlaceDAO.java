@@ -9,6 +9,7 @@ public interface IPlaceDAO {
     Place NewPlace(Place place) throws SQLException;
     Place GetPlace(String place) throws SQLException;
     List<Place> getPlacesInBounds(List<Double> bounds) throws SQLException;
-    boolean FollowThePlace(int placeId, int userId) throws SQLException;
+    void FollowThePlace(int placeId, int userId) throws SQLException;
+    void UnfollowThePlace(int placeId, int userId) throws SQLException;
     boolean IsAlreadyFollowed(int placeId, int userId) throws SQLException;
 }

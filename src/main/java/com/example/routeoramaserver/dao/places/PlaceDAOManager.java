@@ -263,7 +263,7 @@ public class PlaceDAOManager implements IPlaceDAO {
     }
 
     @Override
-    public boolean FollowThePlace(int placeId, int userId) {
+    public void FollowThePlace(int placeId, int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
 
@@ -279,10 +279,9 @@ public class PlaceDAOManager implements IPlaceDAO {
 
                 if (affectedRows == 0) {
                     System.out.println("Creating follow request failed");
-                    return false;
-                }
+                } else
+                    System.out.println("Follow request successfully executed");
 
-                System.out.println("Follow request successfully executed");
             } catch (SQLException e) {
                 System.out.println("Creating follow request failed" + e.getMessage());
             } finally {
@@ -297,39 +296,41 @@ public class PlaceDAOManager implements IPlaceDAO {
                     e.printStackTrace();
                 }
             }
-            return true;
         }
-        else {
-            try {
-                connection = databaseConnection.getConnection();
-                connection.setSchema("Routeourama");
-                statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"placeid\" = ?");
-                statement.setInt(1, userId);
-                statement.setInt(2, placeId);
+    }
 
-                int affectedRows = statement.executeUpdate();
+    @Override
+    public void UnfollowThePlace(int placeId, int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
 
-                if (affectedRows == 0) {
-                    System.out.println("Unfollow request failed");
-                    return true;
-                }
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"placeid\" = ?");
+            statement.setInt(1, userId);
+            statement.setInt(2, placeId);
 
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Unfollow request failed");
+            } else
                 System.out.println("Unfollow request successfully executed");
-            } catch (SQLException e) {
-                System.out.println("Deleting follow request failed" + e.getMessage());
-            } finally {
-                if (statement != null) try {
-                    statement.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (connection != null) try {
-                    connection.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+        } catch (SQLException e) {
+            System.out.println("Deleting follow request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return false;
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
