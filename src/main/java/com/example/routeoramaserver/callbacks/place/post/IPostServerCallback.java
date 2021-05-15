@@ -12,5 +12,6 @@ public interface IPostServerCallback extends Remote {
     PostContainer LoadPostsFromChannel(int placeID, int postID) throws RemoteException;
     void LikeThePost(int postId, int userId) throws RemoteException;
     void UnlikeThePost(int postId, int userId) throws RemoteException;
-    void IsAlreadyLiked(int postId, int userId) throws RemoteException;
+    boolean IsAlreadyLiked(int postId, int userId) throws RemoteException;
+
 }

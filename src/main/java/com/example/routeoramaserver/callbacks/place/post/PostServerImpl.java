@@ -77,9 +77,9 @@ public class PostServerImpl implements IPostServerCallback{
     }
 
     @Override
-    public void IsAlreadyLiked(int postId, int userId) throws RemoteException {
+    public boolean IsAlreadyLiked(int postId, int userId) throws RemoteException {
         try {
-            postDAO.IsAlreadyLiked(postId,userId);
+            return postDAO.IsAlreadyLiked(postId,userId);
         } catch (SQLException e) {
             throw new RuntimeException("Error isAlreadyLiked post");
         }
