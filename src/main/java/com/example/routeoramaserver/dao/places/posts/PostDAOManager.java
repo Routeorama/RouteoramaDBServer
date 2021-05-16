@@ -309,7 +309,7 @@ public class PostDAOManager implements IPostDAO {
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("DELETE FROM \"Follow\" WHERE \"userid\" = ? AND \"postid\" = ?");
+            statement = connection.prepareStatement("DELETE FROM \"Likes\" WHERE \"userid\" = ? AND \"postid\" = ?");
             statement.setInt(1, userId);
             statement.setInt(2, postId);
 
