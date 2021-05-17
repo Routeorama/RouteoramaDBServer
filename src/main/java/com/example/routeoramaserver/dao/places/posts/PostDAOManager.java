@@ -305,6 +305,7 @@ public class PostDAOManager implements IPostDAO {
             }
             resultSet = statement.executeQuery();
 
+            //TODO add byte array with null
             while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
@@ -476,4 +477,154 @@ public class PostDAOManager implements IPostDAO {
         }
         return false;
     }
+
+    @Override
+    public PostContainer GetPostsForNewsFeed(int userId) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Post post = null;
+        List<Post> posts = new ArrayList<>();
+        PostContainer postContainer = new PostContainer();
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+
+            statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
+                    "INNER JOIN \"Routeourama\".\"Follow\"  on \"Follow\".placeid = \"Post\".placeid\n" +
+                    "WHERE \"Follow\".userid = ?\n" +
+                    "ORDER BY \"postid\" DESC\n" +
+                    "LIMIT 11;\n");
+            statement.setInt(1, userId);
+
+            resultSet = statement.executeQuery();
+
+            //TODO add byte array with null
+            while (resultSet.next()) {
+                int newPostID = resultSet.getInt("postid");
+                String newPostTitle = resultSet.getString("title");
+                String newPostContent = resultSet.getString("content");
+                byte[] newPostPhoto = resultSet.getBytes("photo");
+                int newPostLikes = resultSet.getInt("likecount");
+                Date newPostDate = resultSet.getDate("dateOfCreation");
+                int newPlaceID = resultSet.getInt("placeid");
+                int newUserID = resultSet.getInt("userid");
+                String photoType = resultSet.getString("photoType");
+
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                posts.add(post);
+            }
+
+
+            if (posts.size() == 0) {
+                postContainer.setPosts(null);
+                postContainer.setHasMorePosts(false);
+            } else if (posts.size() > 10) {
+                posts.remove(10);
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(true);
+            } else {
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(false);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Could not load posts for news feed" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return postContainer;
+    }
+
+
+
+    @Override
+    public PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Post post = null;
+        List<Post> posts = new ArrayList<>();
+        PostContainer postContainer = new PostContainer();
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+
+            statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Post\"\n" +
+                    "INNER JOIN \"Routeourama\".\"Follow\"  on \"Follow\".placeid = \"Post\".placeid\n" +
+                    "WHERE \"Follow\".userid = ? AND \"Post\".postid < ?\n" +
+                    "ORDER BY \"postid\" DESC\n" +
+                    "LIMIT 11;");
+            statement.setInt(1, userId);
+            statement.setInt(2, postId);
+            resultSet = statement.executeQuery();
+
+            //TODO add byte array with null
+            while (resultSet.next()) {
+                int newPostID = resultSet.getInt("postid");
+                String newPostTitle = resultSet.getString("title");
+                String newPostContent = resultSet.getString("content");
+                byte[] newPostPhoto = resultSet.getBytes("photo");
+                int newPostLikes = resultSet.getInt("likecount");
+                Date newPostDate = resultSet.getDate("dateOfCreation");
+                int newPlaceID = resultSet.getInt("placeid");
+                int newUserID = resultSet.getInt("userid");
+                String photoType = resultSet.getString("photoType");
+
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                posts.add(post);
+            }
+
+
+            if (posts.size() == 0) {
+                postContainer.setPosts(null);
+                postContainer.setHasMorePosts(false);
+            } else if (posts.size() > 10) {
+                posts.remove(10);
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(true);
+            } else {
+                postContainer.setPosts(posts);
+                postContainer.setHasMorePosts(false);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Could not load more posts for news feed" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return postContainer;
+    }
+
+
 }

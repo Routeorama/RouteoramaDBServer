@@ -15,4 +15,6 @@ public interface IPostDAO {
     void LikeThePost(int postId, int userId) throws SQLException;
     void UnlikeThePost(int postId, int userId) throws SQLException;
     boolean IsAlreadyLiked(int postId, int userId) throws SQLException;
+    PostContainer GetPostsForNewsFeed(int userId) throws SQLException;
+    PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws SQLException;
 }

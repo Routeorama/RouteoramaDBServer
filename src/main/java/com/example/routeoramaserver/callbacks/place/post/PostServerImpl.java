@@ -85,4 +85,22 @@ public class PostServerImpl implements IPostServerCallback{
             throw new RuntimeException("Error isAlreadyLiked post");
         }
     }
+
+    @Override
+    public PostContainer GetPostsForNewsFeed(int userId) throws RemoteException {
+        try {
+            return postDAO.GetPostsForNewsFeed(userId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while getting posts for feed.");
+        }
+    }
+
+    @Override
+    public PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws RemoteException {
+        try {
+            return postDAO.LoadMorePostsForNewsFeed(userId, postId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while getting posts for feed.");
+        }
+    }
 }
