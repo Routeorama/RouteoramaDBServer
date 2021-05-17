@@ -4,9 +4,10 @@ import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface IPostServerCallback extends Remote {
-    Post NewPost(Post post) throws RemoteException;
+    Post NewPost(Post post, List<String> tags) throws RemoteException;
     boolean DeletePost(int postID) throws RemoteException;
     Post GetPost(int postID) throws RemoteException;
     PostContainer LoadPostsFromChannel(int placeID, int postID) throws RemoteException;

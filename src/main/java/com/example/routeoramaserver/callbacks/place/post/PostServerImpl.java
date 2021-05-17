@@ -8,6 +8,7 @@ import com.example.routeoramaserver.models.PostContainer;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
+import java.util.List;
 
 public class PostServerImpl implements IPostServerCallback{
     private IPostDAO postDAO;
@@ -23,9 +24,9 @@ public class PostServerImpl implements IPostServerCallback{
     }
 
     @Override
-    public Post NewPost(Post post) throws RemoteException {
+    public Post NewPost(Post post, List<String> tags) throws RemoteException {
         try {
-            return postDAO.NewPost(post);
+            return postDAO.NewPost(post, tags);
         } catch (SQLException e) {
             throw new RuntimeException("Error creating post");
         }

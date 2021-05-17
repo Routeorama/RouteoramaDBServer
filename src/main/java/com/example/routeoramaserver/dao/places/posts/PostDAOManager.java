@@ -22,7 +22,7 @@ public class PostDAOManager implements IPostDAO {
     }
 
     @Override
-    public Post NewPost(Post post) {
+    public Post NewPost(Post post, List<String> tags) {
         Connection connection = null;
         PreparedStatement statement = null;
         Post newPost = null;
@@ -46,6 +46,10 @@ public class PostDAOManager implements IPostDAO {
             if (m == 1) {
                 System.out.println("Created post successfully");
                 newPost = GetPost(post.getTitle());
+
+                addTagsFromContent(tags);
+                addTagsToSpecificPost(newPost,tags);
+
                 return newPost;
             } else {
                 System.out.println("Post creation failed");
@@ -66,6 +70,77 @@ public class PostDAOManager implements IPostDAO {
             }
         }
         return newPost;
+    }
+
+    private void addTagsToSpecificPost(Post post, List<String> tags) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        for (String tag : tags) {
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("INSERT INTO \"PostTag\" (\"postid\", \"tagcontent\") values (?,?)");
+                statement.setInt(1, post.getPostId());
+                statement.setString(2, tag);
+
+                int m = statement.executeUpdate();
+
+                if (m == 1) {
+                    System.out.println("Created PostTag successfully -> " + tag + ", " + post.getPostId());
+                } else {
+                    System.out.println("PostTag creation failed -> " + tag + ", " + post.getPostId());
+                }
+            } catch (SQLException e) {
+                System.out.println("PostTag already exists -> " + tag + ", " + post.getPostId() + ". " + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void addTagsFromContent(List<String> tags) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        for (String tag : tags) {
+            try {
+                connection = databaseConnection.getConnection();
+                connection.setSchema("Routeourama");
+                statement = connection.prepareStatement("INSERT INTO \"Tag\" (\"tagcontent\") values (?)");
+                statement.setString(1, tag);
+
+                int m = statement.executeUpdate();
+
+                if (m == 1) {
+                    System.out.println("Created Tag successfully -> " + tag);
+                } else {
+                    System.out.println("Tag creation failed -> " + tag);
+                }
+            } catch (SQLException e) {
+                System.out.println("Tag already exists -> " + tag + ". " + e.getMessage());
+            } finally {
+                if (statement != null) try {
+                    statement.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

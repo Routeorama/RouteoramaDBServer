@@ -4,9 +4,10 @@ import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface IPostDAO {
-    Post NewPost(Post post) throws SQLException;
+    Post NewPost(Post post, List<String> tags) throws SQLException;
     boolean DeletePost(int postID) throws SQLException;
     Post GetPost(int postID) throws SQLException;
     Post GetPost(String title) throws SQLException;
