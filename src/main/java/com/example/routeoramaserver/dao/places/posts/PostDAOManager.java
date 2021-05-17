@@ -47,8 +47,7 @@ public class PostDAOManager implements IPostDAO {
                 System.out.println("Created post successfully");
                 newPost = GetPost(post.getTitle());
 
-                addTagsFromContent(tags);
-                addTagsToSpecificPost(newPost,tags);
+                addTagsToSpecificPost(newPost,addTagsFromContent(tags));
 
                 return newPost;
             } else {
@@ -72,27 +71,27 @@ public class PostDAOManager implements IPostDAO {
         return newPost;
     }
 
-    private void addTagsToSpecificPost(Post post, List<String> tags) {
+    private void addTagsToSpecificPost(Post post, List<Integer> tagsids) {
         Connection connection = null;
         PreparedStatement statement = null;
 
-        for (String tag : tags) {
+        for (int tagid : tagsids) {
             try {
                 connection = databaseConnection.getConnection();
                 connection.setSchema("Routeourama");
-                statement = connection.prepareStatement("INSERT INTO \"PostTag\" (\"postid\", \"tagcontent\") values (?,?)");
+                statement = connection.prepareStatement("INSERT INTO \"PostTag\" (\"postid\", \"tagid\") values (?,?)");
                 statement.setInt(1, post.getPostId());
-                statement.setString(2, tag);
+                statement.setInt(2, tagid);
 
                 int m = statement.executeUpdate();
 
                 if (m == 1) {
-                    System.out.println("Created PostTag successfully -> " + tag + ", " + post.getPostId());
+                    System.out.println("Created PostTag successfully -> " + tagid + ", " + post.getPostId());
                 } else {
-                    System.out.println("PostTag creation failed -> " + tag + ", " + post.getPostId());
+                    System.out.println("PostTag creation failed -> " + tagid + ", " + post.getPostId());
                 }
             } catch (SQLException e) {
-                System.out.println("PostTag already exists -> " + tag + ", " + post.getPostId() + ". " + e.getMessage());
+                System.out.println("PostTag already exists -> " + tagid + ", " + post.getPostId() + ". " + e.getMessage());
             } finally {
                 if (statement != null) try {
                     statement.close();
@@ -108,27 +107,44 @@ public class PostDAOManager implements IPostDAO {
         }
     }
 
-    private void addTagsFromContent(List<String> tags) {
+    private List<Integer> addTagsFromContent(List<String> tags) {
         Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Integer> idsOfInsertedTags = new ArrayList<>();
 
         for (String tag : tags) {
             try {
                 connection = databaseConnection.getConnection();
                 connection.setSchema("Routeourama");
-                statement = connection.prepareStatement("INSERT INTO \"Tag\" (\"tagcontent\") values (?)");
+                statement = connection.prepareStatement("INSERT INTO \"Tag\" (\"tagcontent\") values (?)", Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, tag);
-
+                statement.executeUpdate();
+                resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    int id = resultSet.getInt(2);
+                    if(id > 0) {
+                        idsOfInsertedTags.add(id);
+                        System.out.println("Inserted tag ID - " + id); // display inserted record
+                    }
+                    else System.out.println("Tag creation failed -> " + tag);
+                }
+                /*
                 int m = statement.executeUpdate();
 
                 if (m == 1) {
                     System.out.println("Created Tag successfully -> " + tag);
                 } else {
                     System.out.println("Tag creation failed -> " + tag);
-                }
+                }*/
             } catch (SQLException e) {
                 System.out.println("Tag already exists -> " + tag + ". " + e.getMessage());
             } finally {
+                if (resultSet != null) try {
+                    resultSet.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 if (statement != null) try {
                     statement.close();
                 } catch (Exception e) {
@@ -141,6 +157,7 @@ public class PostDAOManager implements IPostDAO {
                 }
             }
         }
+        return (idsOfInsertedTags);
     }
 
     @Override
@@ -157,7 +174,7 @@ public class PostDAOManager implements IPostDAO {
             System.out.println("Post deleted.");
             return true;
         } catch (SQLException e) {
-            System.out.println("Failed to delete the post" + e.getMessage());
+            System.out.println("Failed to delete the post " + e.getMessage());
         }
         return false;
     }
