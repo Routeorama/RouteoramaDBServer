@@ -379,4 +379,93 @@ public class PlaceDAOManager implements IPlaceDAO {
         }
         return false;
     }
+
+    @Override
+    public List<String> GetMostFollowedPlaces() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<String> mostFollowedPlaces = new ArrayList<>();
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT  \"name\", \"followCount\" FROM \"Routeourama\".\"Place\"\n" +
+                    "ORDER BY \"followCount\" DESC\n" +
+                    "LIMIT 5");
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                int followCount = resultSet.getInt("followCount");
+                mostFollowedPlaces.add(name);
+                mostFollowedPlaces.add(String.valueOf(followCount));
+            }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the most followed places" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return mostFollowedPlaces;
+    }
+
+    @Override
+    public List<String> GetMostLikedPlaces() throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<String> mostLikedPlaces = new ArrayList<>();
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT \"name\", sum(likecount) AS likecount\n" +
+                    "FROM \"Routeourama\".\"Post\"\n" +
+                    "JOIN \"Routeourama\".\"Place\" on  \"Place\".placeid = \"Post\".placeid\n" +
+                    "GROUP BY \"Place\".placeid\n" +
+                    "ORDER BY likecount DESC\n" +
+                    "LIMIT 5");
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                int likecount = resultSet.getInt("likecount");
+                mostLikedPlaces.add(name);
+                mostLikedPlaces.add(String.valueOf(likecount));
+            }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the most liked places" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return mostLikedPlaces;
+    }
 }

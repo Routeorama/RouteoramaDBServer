@@ -13,4 +13,6 @@ public interface IPlaceServerCallback extends Remote {
     void FollowThePlace(int placeId, int userId) throws RemoteException;
     void UnfollowThePlace(int placeId, int userId) throws RemoteException;
     boolean IsAlreadyFollowed(int placeId, int userId) throws RemoteException;
+    List<String> GetMostFollowedPlaces() throws RemoteException;
+    List<String> GetMostLikedPlaces() throws RemoteException;
 }

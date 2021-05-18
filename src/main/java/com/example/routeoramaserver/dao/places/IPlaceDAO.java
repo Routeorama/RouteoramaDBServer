@@ -12,4 +12,6 @@ public interface IPlaceDAO {
     void FollowThePlace(int placeId, int userId) throws SQLException;
     void UnfollowThePlace(int placeId, int userId) throws SQLException;
     boolean IsAlreadyFollowed(int placeId, int userId) throws SQLException;
+    List<String> GetMostFollowedPlaces() throws SQLException;
+    List<String> GetMostLikedPlaces() throws SQLException;
 }

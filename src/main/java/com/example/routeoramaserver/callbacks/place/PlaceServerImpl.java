@@ -75,4 +75,22 @@ public class PlaceServerImpl implements IPlaceServerCallback {
             throw new RuntimeException("Error isAlreadyFollowed place");
         }
     }
+
+    @Override
+    public List<String> GetMostFollowedPlaces() throws RemoteException {
+        try {
+            return placeDAO.GetMostFollowedPlaces();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while getting most followed places");
+        }
+    }
+
+    @Override
+    public List<String> GetMostLikedPlaces() throws RemoteException {
+        try {
+            return placeDAO.GetMostLikedPlaces();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while getting most liked places");
+        }
+    }
 }

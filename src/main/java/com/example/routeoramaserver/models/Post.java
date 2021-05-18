@@ -16,8 +16,9 @@ public class Post implements Serializable {
     private Date dateOfCreation;
     private int placeId;
     private String photoType;
+    private String creator;
 
-    public Post(int userId, int postId, String title, String content, byte[] photo, int likeCount, Date dateOfCreation, int placeId, String photoType) {
+    public Post(int userId, int postId, String title, String content, byte[] photo, int likeCount, Date dateOfCreation, int placeId, String photoType, String creator) {
         this.userId = userId;
         this.postId = postId;
         this.title = title;
@@ -27,6 +28,7 @@ public class Post implements Serializable {
         this.dateOfCreation = dateOfCreation;
         this.placeId = placeId;
         this.photoType = photoType;
+        this.creator = creator;
     }
 
     public int getUserId() {
@@ -101,17 +103,25 @@ public class Post implements Serializable {
         this.photoType = photoType;
     }
 
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Post)) return false;
         Post post = (Post) o;
-        return userId == post.userId && postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Objects.equals(photoType, post.photoType) && Arrays.equals(photo, post.photo) && Objects.equals(dateOfCreation, post.dateOfCreation);
+        return userId == post.userId && postId == post.postId && likeCount == post.likeCount && placeId == post.placeId && Objects.equals(title, post.title) && Objects.equals(content, post.content) && Arrays.equals(photo, post.photo) && Objects.equals(dateOfCreation, post.dateOfCreation) && Objects.equals(photoType, post.photoType) && Objects.equals(creator, post.creator);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(userId, postId, title, content, photoType, likeCount, dateOfCreation, placeId);
+        int result = Objects.hash(userId, postId, title, content, likeCount, dateOfCreation, placeId, photoType, creator);
         result = 31 * result + Arrays.hashCode(photo);
         return result;
     }
@@ -123,11 +133,12 @@ public class Post implements Serializable {
                 ", postId=" + postId +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", photoType='" + photoType + '\'' +
                 ", photo=" + Arrays.toString(photo) +
                 ", likeCount=" + likeCount +
                 ", dateOfCreation=" + dateOfCreation +
                 ", placeId=" + placeId +
+                ", photoType='" + photoType + '\'' +
+                ", creator='" + creator + '\'' +
                 '}';
     }
 }

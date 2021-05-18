@@ -1,8 +1,10 @@
 package com.example.routeoramaserver.dao.places.posts;
 
 import com.example.routeoramaserver.db.DatabaseConnection;
+import com.example.routeoramaserver.enumClasses.Role;
 import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
+import com.example.routeoramaserver.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -203,7 +205,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -226,6 +228,33 @@ public class PostDAOManager implements IPostDAO {
         }
 
         return post;
+    }
+
+    private String getPostCreator(int userId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        String displayName = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT \"displayname\" FROM \"user\" WHERE \"userid\" = ?");
+            statement.setInt(1, userId);
+
+            resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                displayName = resultSet.getString("displayname");
+            }
+        }
+        catch (SQLException ex) { System.out.println("Could not fetch name of creator" + ex.getMessage()); }
+        finally {
+            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        }
+        return displayName;
     }
 
     @Override
@@ -252,7 +281,7 @@ public class PostDAOManager implements IPostDAO {
                 int newPlaceID = resultSet.getInt("placeid");
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
             }
         } catch (SQLException e) {
             System.out.println("Could not find specified post " + e.getMessage());
@@ -317,7 +346,7 @@ public class PostDAOManager implements IPostDAO {
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
 
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
 
@@ -512,7 +541,7 @@ public class PostDAOManager implements IPostDAO {
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
 
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
 
@@ -587,7 +616,7 @@ public class PostDAOManager implements IPostDAO {
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
 
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType);
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType,getPostCreator(newUserID));
                 posts.add(post);
             }
 
