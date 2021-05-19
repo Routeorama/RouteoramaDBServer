@@ -14,4 +14,6 @@ public interface IPlaceDAO {
     boolean IsAlreadyFollowed(int placeId, int userId) throws SQLException;
     List<String> GetMostFollowedPlaces() throws SQLException;
     List<String> GetMostLikedPlaces() throws SQLException;
+
+    List<Place> SearchForPlaces(String filter) throws SQLException;
 }

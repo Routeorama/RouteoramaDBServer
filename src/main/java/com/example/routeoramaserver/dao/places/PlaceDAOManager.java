@@ -468,4 +468,48 @@ public class PlaceDAOManager implements IPlaceDAO {
         }
         return mostLikedPlaces;
     }
+
+    @Override
+    public List<Place> SearchForPlaces(String filter) throws SQLException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Place> searchedPlaces = new ArrayList<>();
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT \"name\" FROM \"Routeourama\".\"Place\"\n" +
+                    "WHERE \"Place\".name LIKE ?\n" +
+                    "ORDER BY \"followCount\" DESC\n" +
+                    "LIMIT 5");
+            statement.setString(1, "%" + filter + "%");
+            resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                Place newPlace = new Place(0, name, null, 0, 0);
+                searchedPlaces.add(newPlace);
+            }
+        } catch (SQLException e) {
+            System.out.println("Could not fetch the searched places" + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return searchedPlaces;
+    }
 }

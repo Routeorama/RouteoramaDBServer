@@ -93,4 +93,13 @@ public class PlaceServerImpl implements IPlaceServerCallback {
             throw new RuntimeException("Error while getting most liked places");
         }
     }
+
+    @Override
+    public List<Place> SearchForPlaces(String filter) throws RemoteException {
+        try {
+            return placeDAO.SearchForPlaces(filter);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while getting places for search bar");
+        }
+    }
 }
