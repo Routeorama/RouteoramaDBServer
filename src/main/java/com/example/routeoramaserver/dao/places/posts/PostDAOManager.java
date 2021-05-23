@@ -752,7 +752,8 @@ public class PostDAOManager implements IPostDAO {
             connection.setSchema("Routeourama");
             statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Comment\"\n" +
                     "WHERE postid = ?\n" +
-                    "ORDER BY \"timestamp\" DESC\n");
+                    "ORDER BY \"timestamp\" DESC\n" +
+                    "LIMIT 6");
             statement.setInt(1, postId);
 
             ResultSet resultSet = statement.executeQuery();
@@ -804,7 +805,8 @@ public class PostDAOManager implements IPostDAO {
             statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Comment\" \n" +
                     "WHERE postid = ?\n " +
                     "AND timestamp < ?\n" +
-                    "ORDER BY \"timestamp\" DESC\n");
+                    "ORDER BY \"timestamp\" DESC\n" +
+                    "LIMIT 6");
             statement.setInt(1, postId);
             statement.setDate(2, lastComment.getTimestamp());
 
