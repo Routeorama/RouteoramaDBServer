@@ -2,6 +2,8 @@ package com.example.routeoramaserver.callbacks.place.post;
 
 import com.example.routeoramaserver.dao.places.posts.IPostDAO;
 import com.example.routeoramaserver.dao.places.posts.PostDAOManager;
+import com.example.routeoramaserver.models.Comment;
+import com.example.routeoramaserver.models.CommentContainer;
 import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 
@@ -103,4 +105,44 @@ public class PostServerImpl implements IPostServerCallback{
             throw new RuntimeException("Error while getting posts for feed.");
         }
     }
+
+    @Override
+    public void Comment(Comment comment) throws RemoteException {
+        try{
+            postDAO.Comment(comment);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void DeleteComment(Comment comment) throws RemoteException {
+        try{
+            postDAO.DeleteComment(comment);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public CommentContainer GetCommentForPost(int postId) throws RemoteException {
+        try{
+            return postDAO.GetCommentForPost(postId);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    @Override
+    public CommentContainer LoadMoreComments(int postId, Comment lastComment) throws RemoteException {
+        try{
+            return postDAO.LoadMoreComments(postId, lastComment);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+
 }

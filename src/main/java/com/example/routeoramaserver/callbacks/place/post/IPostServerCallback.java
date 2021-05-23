@@ -1,5 +1,7 @@
 package com.example.routeoramaserver.callbacks.place.post;
 
+import com.example.routeoramaserver.models.Comment;
+import com.example.routeoramaserver.models.CommentContainer;
 import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 import java.rmi.Remote;
@@ -16,4 +18,8 @@ public interface IPostServerCallback extends Remote {
     boolean IsAlreadyLiked(int postId, int userId) throws RemoteException;
     PostContainer GetPostsForNewsFeed(int userId) throws RemoteException;
     PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws RemoteException;
+    void Comment(Comment comment) throws RemoteException;
+    void DeleteComment(Comment comment) throws RemoteException;
+    CommentContainer GetCommentForPost(int postId) throws RemoteException;
+    CommentContainer LoadMoreComments(int postId, Comment lastComment) throws RemoteException;
 }

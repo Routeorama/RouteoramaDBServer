@@ -1,5 +1,7 @@
 package com.example.routeoramaserver.dao.places.posts;
 
+import com.example.routeoramaserver.models.Comment;
+import com.example.routeoramaserver.models.CommentContainer;
 import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
 
@@ -17,4 +19,8 @@ public interface IPostDAO {
     boolean IsAlreadyLiked(int postId, int userId) throws SQLException;
     PostContainer GetPostsForNewsFeed(int userId) throws SQLException;
     PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws SQLException;
+    void Comment(Comment comment);
+    void DeleteComment(Comment comment);
+    CommentContainer GetCommentForPost(int postId);
+    CommentContainer LoadMoreComments(int postId, Comment lastComment);
 }

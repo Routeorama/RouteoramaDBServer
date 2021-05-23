@@ -1,10 +1,10 @@
 package com.example.routeoramaserver.dao.places.posts;
 
 import com.example.routeoramaserver.db.DatabaseConnection;
-import com.example.routeoramaserver.enumClasses.Role;
+import com.example.routeoramaserver.models.Comment;
+import com.example.routeoramaserver.models.CommentContainer;
 import com.example.routeoramaserver.models.Post;
 import com.example.routeoramaserver.models.PostContainer;
-import com.example.routeoramaserver.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class PostDAOManager implements IPostDAO {
                 System.out.println("Created post successfully");
                 newPost = GetPost(post.getTitle());
 
-                addTagsToSpecificPost(newPost,addTagsFromContent(tags));
+                addTagsToSpecificPost(newPost, addTagsFromContent(tags));
 
                 return newPost;
             } else {
@@ -125,11 +125,10 @@ public class PostDAOManager implements IPostDAO {
                 resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     int id = resultSet.getInt(2);
-                    if(id > 0) {
+                    if (id > 0) {
                         idsOfInsertedTags.add(id);
                         System.out.println("Inserted tag ID - " + id); // display inserted record
-                    }
-                    else System.out.println("Tag creation failed -> " + tag);
+                    } else System.out.println("Tag creation failed -> " + tag);
                 }
                 /*
                 int m = statement.executeUpdate();
@@ -244,15 +243,27 @@ public class PostDAOManager implements IPostDAO {
 
             resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 displayName = resultSet.getString("displayname");
             }
-        }
-        catch (SQLException ex) { System.out.println("Could not fetch name of creator" + ex.getMessage()); }
-        finally {
-            if (resultSet != null) try { resultSet.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
-            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
+        } catch (SQLException ex) {
+            System.out.println("Could not fetch name of creator" + ex.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return displayName;
     }
@@ -581,7 +592,6 @@ public class PostDAOManager implements IPostDAO {
     }
 
 
-
     @Override
     public PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws SQLException {
         Connection connection = null;
@@ -616,7 +626,7 @@ public class PostDAOManager implements IPostDAO {
                 int newUserID = resultSet.getInt("userid");
                 String photoType = resultSet.getString("photoType");
 
-                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType,getPostCreator(newUserID));
+                post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
 
@@ -653,6 +663,184 @@ public class PostDAOManager implements IPostDAO {
             }
         }
         return postContainer;
+    }
+
+    @Override
+    public void Comment(Comment comment) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("INSERT INTO \"Comment\" VALUES (?,?,?,?)");
+            statement.setInt(1, comment.getUserId());
+            statement.setInt(2, comment.getPostId());
+            statement.setString(3, comment.getContent());
+            java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+            statement.setDate(4, date);
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Creating comment request failed");
+            } else
+                System.out.println("Comment request successfully executed");
+
+        } catch (SQLException e) {
+            System.out.println("Creating comment request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void DeleteComment(Comment comment) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("DELETE FROM \"Comment\" WHERE \"userid\" = ? AND \"postid\" = ? AND \"timestamp\" = ?");
+            statement.setInt(1, comment.getUserId());
+            statement.setInt(2, comment.getPostId());
+            statement.setDate(3, comment.getTimestamp());
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                System.out.println("Delete comment request failed");
+            } else
+                System.out.println("Delete comment request successfully executed");
+
+        } catch (SQLException e) {
+            System.out.println("Deleting comment request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public CommentContainer GetCommentForPost(int postId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        Comment comment;
+        List<Comment> list = new ArrayList<>();
+        CommentContainer container = new CommentContainer(new ArrayList<>(), false);
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Comment\"\n" +
+                    "WHERE postid = ?\n" +
+                    "ORDER BY \"timestamp\" DESC\n");
+            statement.setInt(1, postId);
+
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()){
+                comment = new Comment(
+                        resultSet.getInt("userid"),
+                        resultSet.getInt("postid"),
+                        resultSet.getString("content"),
+                        resultSet.getDate("timestamp"));
+                list.add(comment);
+            }
+            List<Comment> first5 = new ArrayList<>();
+            for(int i=0 ;i<5;i++){
+                first5.add(list.get(i));
+            }
+            container.setComments(first5);
+            if(list.size() > 5)
+                container.setHasMoreComments(true);
+            return container;
+
+        } catch (SQLException e) {
+            System.out.println("Fetching comments request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public CommentContainer LoadMoreComments(int postId, Comment lastComment) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        Comment comment;
+        List<Comment> list = new ArrayList<>();
+        CommentContainer container = new CommentContainer(new ArrayList<>(), false);
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT * FROM \"Routeourama\".\"Comment\" \n" +
+                    "WHERE postid = ?\n " +
+                    "AND timestamp < ?\n" +
+                    "ORDER BY \"timestamp\" DESC\n");
+            statement.setInt(1, postId);
+            statement.setDate(2, lastComment.getTimestamp());
+
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()){
+                comment = new Comment(
+                        resultSet.getInt("userid"),
+                        resultSet.getInt("postid"),
+                        resultSet.getString("content"),
+                        resultSet.getDate("timestamp"));
+                list.add(comment);
+            }
+            List<Comment> first5 = new ArrayList<>();
+            for(int i=0 ;i<5;i++){
+                first5.add(list.get(i));
+            }
+            container.setComments(first5);
+            if(list.size() > 5)
+                container.setHasMoreComments(true);
+            return container;
+
+        } catch (SQLException e) {
+            System.out.println("Fetching more comments request failed" + e.getMessage());
+        } finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 
