@@ -677,8 +677,13 @@ public class PostDAOManager implements IPostDAO {
             statement.setInt(1, comment.getUserId());
             statement.setInt(2, comment.getPostId());
             statement.setString(3, comment.getContent());
-            java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
-            statement.setDate(4, date);
+            Date date = new Date(Calendar.getInstance().getTime().getTime());
+            //getTime() returns current time in milliseconds
+            long time = date.getTime();
+            //Passed the milliseconds to constructor of Timestamp class
+            Timestamp timestamp = new Timestamp(time);
+            System.out.println(date.toString());
+            statement.setTimestamp(4, timestamp);
 
             int affectedRows = statement.executeUpdate();
 
@@ -714,7 +719,7 @@ public class PostDAOManager implements IPostDAO {
             statement = connection.prepareStatement("DELETE FROM \"Comment\" WHERE \"userid\" = ? AND \"postid\" = ? AND \"timestamp\" = ?");
             statement.setInt(1, comment.getUserId());
             statement.setInt(2, comment.getPostId());
-            statement.setDate(3, comment.getTimestamp());
+            statement.setTimestamp(3, comment.getTimestamp());
 
             int affectedRows = statement.executeUpdate();
 
@@ -747,6 +752,7 @@ public class PostDAOManager implements IPostDAO {
         List<Comment> list = new ArrayList<>();
         CommentContainer container = new CommentContainer(new ArrayList<>(), false);
 
+        System.out.println(postId);
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
@@ -758,20 +764,21 @@ public class PostDAOManager implements IPostDAO {
 
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()){
-                comment = new Comment(
-                        resultSet.getInt("userid"),
-                        resultSet.getInt("postid"),
-                        resultSet.getString("content"),
-                        resultSet.getDate("timestamp"));
-                list.add(comment);
+                int userId = resultSet.getInt("userid");
+                int postId1 = resultSet.getInt("postid");
+                String displayName = getPostCreator(userId);
+                String content = resultSet.getString("content");
+                Timestamp date = resultSet.getTimestamp("timestamp");
+                Comment comment1 = new Comment(userId, displayName, postId1, content, date);
+                list.add(comment1);
             }
             List<Comment> first5 = new ArrayList<>();
-            for(int i=0 ;i<5;i++){
-                first5.add(list.get(i));
+            if(list.size() > 0) {
+                first5.addAll(list);
+                container.setComments(first5);
+                if (list.size() > 5)
+                    container.setHasMoreComments(true);
             }
-            container.setComments(first5);
-            if(list.size() > 5)
-                container.setHasMoreComments(true);
             return container;
 
         } catch (SQLException e) {
@@ -808,16 +815,17 @@ public class PostDAOManager implements IPostDAO {
                     "ORDER BY \"timestamp\" DESC\n" +
                     "LIMIT 6");
             statement.setInt(1, postId);
-            statement.setDate(2, lastComment.getTimestamp());
+            statement.setTimestamp(2, lastComment.getTimestamp());
 
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()){
-                comment = new Comment(
-                        resultSet.getInt("userid"),
-                        resultSet.getInt("postid"),
-                        resultSet.getString("content"),
-                        resultSet.getDate("timestamp"));
-                list.add(comment);
+                int userId = resultSet.getInt("userid");
+                int postId1 = resultSet.getInt("postid");
+                String displayName = getPostCreator(userId);
+                String content = resultSet.getString("content");
+                Timestamp date = resultSet.getTimestamp("timestamp");
+                Comment comment1 = new Comment(userId, displayName, postId1, content, date);
+                list.add(comment1);
             }
             List<Comment> first5 = new ArrayList<>();
             for(int i=0 ;i<5;i++){

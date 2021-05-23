@@ -21,5 +21,5 @@ public interface IPostServerCallback extends Remote {
     void Comment(Comment comment) throws RemoteException;
     void DeleteComment(Comment comment) throws RemoteException;
     CommentContainer GetCommentForPost(int postId) throws RemoteException;
-    CommentContainer LoadMoreComments(int postId, Comment lastComment) throws RemoteException;
+    CommentContainer LoadMoreComments(Comment lastComment) throws RemoteException;
 }

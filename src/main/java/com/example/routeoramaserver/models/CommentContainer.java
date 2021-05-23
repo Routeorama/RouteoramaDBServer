@@ -1,9 +1,10 @@
 package com.example.routeoramaserver.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class CommentContainer {
+public class CommentContainer implements Serializable {
     private static final long serialVersionUID = 6529685098267757701L;
     private List<Comment> comments;
     private boolean hasMoreComments;

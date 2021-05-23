@@ -135,9 +135,9 @@ public class PostServerImpl implements IPostServerCallback{
     }
 
     @Override
-    public CommentContainer LoadMoreComments(int postId, Comment lastComment) throws RemoteException {
+    public CommentContainer LoadMoreComments(Comment lastComment) throws RemoteException {
         try{
-            return postDAO.LoadMoreComments(postId, lastComment);
+            return postDAO.LoadMoreComments(lastComment.getPostId(), lastComment);
         } catch (Exception e){
             System.out.println(e);
         }
