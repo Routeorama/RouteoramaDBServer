@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public interface IUserServerCallback extends Remote {
     User Login(String username, String password) throws RemoteException;
 
-    void Logout() throws RemoteException;
-
     boolean Register(User user) throws RemoteException;
+
+    String UpdateUser(User user) throws RemoteException;
 }

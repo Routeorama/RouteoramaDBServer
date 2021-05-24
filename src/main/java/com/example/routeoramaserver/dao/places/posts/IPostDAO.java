@@ -23,4 +23,5 @@ public interface IPostDAO {
     void DeleteComment(Comment comment);
     CommentContainer GetCommentForPost(int postId);
     CommentContainer LoadMoreComments(int postId, Comment lastComment);
+    int GetCommentCount(int postId);
 }

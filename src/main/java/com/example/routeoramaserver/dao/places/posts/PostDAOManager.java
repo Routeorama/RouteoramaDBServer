@@ -853,5 +853,46 @@ public class PostDAOManager implements IPostDAO {
         return null;
     }
 
+    @Override
+    public int GetCommentCount(int postId) { //TODO result set not closed in some methods
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = databaseConnection.getConnection();
+            connection.setSchema("Routeourama");
+            statement = connection.prepareStatement("SELECT COUNT(\"Routeourama\".\"Comment\".postid)\n" +
+                    "FROM \"Routeourama\".\"Comment\"\n" +
+                    "WHERE postid = ?");
+            statement.setInt(1, postId);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int commentCount = resultSet.getInt("count");
+                return commentCount;
+                }
+        } catch (SQLException e) {
+            System.out.println("Could not find specified post " + e.getMessage());
+        } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
 
 }

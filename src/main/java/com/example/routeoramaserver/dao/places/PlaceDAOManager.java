@@ -381,7 +381,7 @@ public class PlaceDAOManager implements IPlaceDAO {
     }
 
     @Override
-    public List<String> GetMostFollowedPlaces() throws SQLException {
+    public List<String> GetMostFollowedPlaces() {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -424,7 +424,7 @@ public class PlaceDAOManager implements IPlaceDAO {
     }
 
     @Override
-    public List<String> GetMostLikedPlaces() throws SQLException {
+    public List<String> GetMostLikedPlaces() {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -470,7 +470,7 @@ public class PlaceDAOManager implements IPlaceDAO {
     }
 
     @Override
-    public List<Place> SearchForPlaces(String filter) throws SQLException {
+    public List<Place> SearchForPlaces(String filter) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;

@@ -31,16 +31,20 @@ public class UserServerImpl implements IUserServerCallback {
     }
 
     @Override
-    public void Logout() throws RemoteException {
-        //TODO implement logout?
-    }
-
-    @Override
     public boolean Register(User user) throws RemoteException {
         try {
             return userDAOManager.Register(user);
         } catch (SQLException e) {
             throw new RuntimeException("Error while registering");
+        }
+    }
+
+    @Override
+    public String UpdateUser(User user) throws RemoteException {
+        try {
+            return userDAOManager.UpdateUser(user);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while updating profile");
         }
     }
 }

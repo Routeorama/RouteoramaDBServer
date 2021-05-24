@@ -144,5 +144,15 @@ public class PostServerImpl implements IPostServerCallback{
         return null;
     }
 
+    @Override
+    public int GetCommentCount(int postId) throws RemoteException {
+        try{
+            return postDAO.GetCommentCount(postId);
+        } catch (Exception e){
+            System.out.println(e);
+        }
+        return 0;
+    }
+
 
 }
