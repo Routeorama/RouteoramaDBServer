@@ -678,11 +678,8 @@ public class PostDAOManager implements IPostDAO {
             statement.setInt(2, comment.getPostId());
             statement.setString(3, comment.getContent());
             Date date = new Date(Calendar.getInstance().getTime().getTime());
-            //getTime() returns current time in milliseconds
             long time = date.getTime();
-            //Passed the milliseconds to constructor of Timestamp class
             Timestamp timestamp = new Timestamp(time);
-            System.out.println(date.toString());
             statement.setTimestamp(4, timestamp);
 
             int affectedRows = statement.executeUpdate();
@@ -752,7 +749,6 @@ public class PostDAOManager implements IPostDAO {
         List<Comment> list = new ArrayList<>();
         CommentContainer container = new CommentContainer(new ArrayList<>(), false);
 
-        System.out.println(postId);
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
@@ -773,11 +769,13 @@ public class PostDAOManager implements IPostDAO {
                 list.add(comment1);
             }
             List<Comment> first5 = new ArrayList<>();
+            if (list.size() == 6) {
+                list.remove(5);
+                container.setHasMoreComments(true);
+            }
             if(list.size() > 0) {
                 first5.addAll(list);
                 container.setComments(first5);
-                if (list.size() > 5)
-                    container.setHasMoreComments(true);
             }
             return container;
 
@@ -828,12 +826,14 @@ public class PostDAOManager implements IPostDAO {
                 list.add(comment1);
             }
             List<Comment> first5 = new ArrayList<>();
-            for(int i=0 ;i<5;i++){
-                first5.add(list.get(i));
-            }
-            container.setComments(first5);
-            if(list.size() > 5)
+            if (list.size() == 6) {
+                list.remove(5);
                 container.setHasMoreComments(true);
+            }
+            if(list.size() > 0) {
+                first5.addAll(list);
+                container.setComments(first5);
+            }
             return container;
 
         } catch (SQLException e) {
