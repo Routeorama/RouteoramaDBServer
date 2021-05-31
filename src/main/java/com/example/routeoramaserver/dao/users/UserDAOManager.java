@@ -77,7 +77,7 @@ public class UserDAOManager implements IUserDAO {
                     " values (?,?,?,?,?,?,?,?,?)");
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
-            statement.setString(3, user.getUsername());
+            statement.setString(3, user.getDisplayName());
             statement.setDate(4, user.getDob());
             statement.setString(5, user.getEmail());
             statement.setString(6, String.valueOf(user.getRole()));
