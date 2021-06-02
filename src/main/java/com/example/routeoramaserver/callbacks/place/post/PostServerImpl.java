@@ -21,7 +21,6 @@ public class PostServerImpl implements IPostServerCallback{
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
         postDAO = new PostDAOManager();
     }
 
@@ -111,7 +110,7 @@ public class PostServerImpl implements IPostServerCallback{
         try{
             postDAO.Comment(comment);
         } catch (Exception e){
-            System.out.println(e);
+            throw new RuntimeException("Error while commenting on a post.");
         }
     }
 
@@ -120,7 +119,7 @@ public class PostServerImpl implements IPostServerCallback{
         try{
             postDAO.DeleteComment(comment);
         } catch (Exception e){
-            System.out.println(e);
+            throw new RuntimeException("Error while deleting the comment.");
         }
     }
 
@@ -129,9 +128,8 @@ public class PostServerImpl implements IPostServerCallback{
         try{
             return postDAO.GetCommentForPost(postId);
         } catch (Exception e){
-            System.out.println(e);
+            throw new RuntimeException("Error while getting comments for post.");
         }
-        return null;
     }
 
     @Override
@@ -139,9 +137,8 @@ public class PostServerImpl implements IPostServerCallback{
         try{
             return postDAO.LoadMoreComments(lastComment.getPostId(), lastComment);
         } catch (Exception e){
-            System.out.println(e);
+            throw new RuntimeException("Error while loading more comments.");
         }
-        return null;
     }
 
     @Override
@@ -149,10 +146,7 @@ public class PostServerImpl implements IPostServerCallback{
         try{
             return postDAO.GetCommentCount(postId);
         } catch (Exception e){
-            System.out.println(e);
+            throw new RuntimeException("Error while getting comment count for post.");
         }
-        return 0;
     }
-
-
 }

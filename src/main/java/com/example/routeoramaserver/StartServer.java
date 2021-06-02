@@ -15,6 +15,7 @@ public class StartServer {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
+
         Registry registry = LocateRegistry.createRegistry(1099);
 
         ServerCallback connection = new ServerImpl();

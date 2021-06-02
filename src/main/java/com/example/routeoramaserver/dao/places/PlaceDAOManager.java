@@ -41,7 +41,6 @@ public class PlaceDAOManager implements IPlaceDAO {
                 int lng = resultSet.getInt("lng");
                 String country = resultSet.getString("country");
                 String city = resultSet.getString("city");
-                System.out.println("New location fetched");
                 newLocation = new Location(lat, lng, country, city);
                 return newLocation;
             }
@@ -82,13 +81,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setString(3, location.getCountry());
             statement.setString(4, location.getCity());
             statement.setInt(5, placeId);
-            int m = statement.executeUpdate();
-            if (m == 1) {
-                System.out.println("Inserted new location successfully");
-                return location;
-            } else
-                System.out.println("Insertion of the new location failed");
-
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Location with specified credentials already exists" + e.getMessage());
         } finally {
@@ -122,15 +115,14 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setInt(3, place.getUserId());
             int m = statement.executeUpdate();
             if (m == 1) {
-                System.out.println("Inserted new place successfully");
                 newPlace = GetPlace(place.getName());
                 Location location = insertLocation(place.getLocation(), newPlace.getId());
                 if (location != null) {
                     newPlace.setLocation(location);
                     return newPlace;
-                } else return null;
-            } else
-                System.out.println("Insertion of the new place failed");
+                }
+            else return null;
+            }
 
         } catch (SQLException e) {
             System.out.println("Place already exists " + e.getMessage());
@@ -169,7 +161,6 @@ public class PlaceDAOManager implements IPlaceDAO {
                 String description = resultSet.getString("description");
                 int followCount = resultSet.getInt("followCount");
                 int userid = resultSet.getInt("userid");
-                System.out.println("New place fetched");
                 newPlace = new Place(placeId, placeName1, description, followCount, userid);
 
                 if (newPlace != null) {
@@ -238,7 +229,6 @@ public class PlaceDAOManager implements IPlaceDAO {
                     sendBack.add(newPlace);
                 }
             }
-            System.out.println("Places within bounds fetched.");
             return sendBack;
         } catch (SQLException e) {
             System.out.println("Could not fetch the places within bounds" + e.getMessage());
@@ -275,13 +265,7 @@ public class PlaceDAOManager implements IPlaceDAO {
                 statement.setInt(1, userId);
                 statement.setInt(2, placeId);
 
-                int affectedRows = statement.executeUpdate();
-
-                if (affectedRows == 0) {
-                    System.out.println("Creating follow request failed");
-                } else
-                    System.out.println("Follow request successfully executed");
-
+                statement.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Creating follow request failed" + e.getMessage());
             } finally {
@@ -311,13 +295,7 @@ public class PlaceDAOManager implements IPlaceDAO {
             statement.setInt(1, userId);
             statement.setInt(2, placeId);
 
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows == 0) {
-                System.out.println("Unfollow request failed");
-            } else
-                System.out.println("Unfollow request successfully executed");
-
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Deleting follow request failed" + e.getMessage());
         } finally {
@@ -353,11 +331,9 @@ public class PlaceDAOManager implements IPlaceDAO {
                 int placeid = resultSet.getInt("placeid");
 
                 if (placeId == placeid && userId == userid) {
-                    System.out.println("User is following the place already");
                     return true;
                 }
             }
-            System.out.println("User is not following the place");
         } catch (SQLException e) {
             System.out.println("Could not fetch the follow for user" + e.getMessage());
         } finally {

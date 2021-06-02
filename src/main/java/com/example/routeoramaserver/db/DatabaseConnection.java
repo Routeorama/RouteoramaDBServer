@@ -16,7 +16,6 @@ public class DatabaseConnection
         DriverManager.registerDriver(new org.postgresql.Driver());
     }
 
-
     public static synchronized DatabaseConnection getInstance() throws
             SQLException
     {

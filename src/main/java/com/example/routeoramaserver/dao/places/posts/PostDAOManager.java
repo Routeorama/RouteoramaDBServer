@@ -32,7 +32,8 @@ public class PostDAOManager implements IPostDAO {
         try {
             connection = databaseConnection.getConnection();
             connection.setSchema("Routeourama");
-            statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", \"dateOfCreation\", \"placeid\", \"userid\", \"photoType\")" +
+            statement = connection.prepareStatement("INSERT INTO \"Post\" (\"title\", \"content\", \"photo\", " +
+                    "\"dateOfCreation\", \"placeid\", \"userid\", \"photoType\")" +
                     " values (?,?,?,?,?,?,?)");
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
@@ -46,29 +47,17 @@ public class PostDAOManager implements IPostDAO {
             statement.setString(7, post.getPhotoType());
             int m = statement.executeUpdate();
             if (m == 1) {
-                System.out.println("Created post successfully");
                 newPost = GetPost(post.getTitle());
-
                 addTagsToSpecificPost(newPost, addTagsFromContent(tags));
-
                 return newPost;
             } else {
-                System.out.println("Post creation failed");
                 return null;
             }
         } catch (SQLException e) {
             System.out.println("Post already exists" + e.getMessage());
         } finally {
-            if (statement != null) try {
-                statement.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (connection != null) try {
-                connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if (statement != null) try { statement.close(); } catch (Exception e) { e.printStackTrace(); }
+            if (connection != null) try { connection.close(); } catch (Exception e) { e.printStackTrace(); }
         }
         return newPost;
     }
@@ -87,11 +76,6 @@ public class PostDAOManager implements IPostDAO {
 
                 int m = statement.executeUpdate();
 
-                if (m == 1) {
-                    System.out.println("Created PostTag successfully -> " + tagid + ", " + post.getPostId());
-                } else {
-                    System.out.println("PostTag creation failed -> " + tagid + ", " + post.getPostId());
-                }
             } catch (SQLException e) {
                 System.out.println("PostTag already exists -> " + tagid + ", " + post.getPostId() + ". " + e.getMessage());
             } finally {
@@ -127,17 +111,8 @@ public class PostDAOManager implements IPostDAO {
                     int id = resultSet.getInt(2);
                     if (id > 0) {
                         idsOfInsertedTags.add(id);
-                        System.out.println("Inserted tag ID - " + id); // display inserted record
-                    } else System.out.println("Tag creation failed -> " + tag);
+                    }
                 }
-                /*
-                int m = statement.executeUpdate();
-
-                if (m == 1) {
-                    System.out.println("Created Tag successfully -> " + tag);
-                } else {
-                    System.out.println("Tag creation failed -> " + tag);
-                }*/
             } catch (SQLException e) {
                 System.out.println("Tag already exists -> " + tag + ". " + e.getMessage());
             } finally {
@@ -172,10 +147,21 @@ public class PostDAOManager implements IPostDAO {
             statement = connection.prepareStatement("DELETE FROM \"Post\" WHERE \"postid\" = ?");
             statement.setInt(1, postID);
             statement.executeUpdate();
-            System.out.println("Post deleted.");
             return true;
         } catch (SQLException e) {
             System.out.println("Failed to delete the post " + e.getMessage());
+        }
+        finally {
+            if (statement != null) try {
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (connection != null) try {
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -313,7 +299,6 @@ public class PostDAOManager implements IPostDAO {
                 e.printStackTrace();
             }
         }
-
         return post;
     }
 
@@ -345,7 +330,6 @@ public class PostDAOManager implements IPostDAO {
             }
             resultSet = statement.executeQuery();
 
-            //TODO add byte array with null
             while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
@@ -360,7 +344,6 @@ public class PostDAOManager implements IPostDAO {
                 post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
-
 
             if (posts.size() == 0) {
                 postContainer.setPosts(null);
@@ -410,12 +393,7 @@ public class PostDAOManager implements IPostDAO {
                 statement.setInt(1, userId);
                 statement.setInt(2, postId);
 
-                int affectedRows = statement.executeUpdate();
-
-                if (affectedRows == 0) {
-                    System.out.println("Creating like request failed");
-                } else
-                    System.out.println("Like request successfully executed");
+                statement.executeUpdate();
 
             } catch (SQLException e) {
                 System.out.println("Creating like request failed" + e.getMessage());
@@ -445,13 +423,7 @@ public class PostDAOManager implements IPostDAO {
             statement = connection.prepareStatement("DELETE FROM \"Likes\" WHERE \"userid\" = ? AND \"postid\" = ?");
             statement.setInt(1, userId);
             statement.setInt(2, postId);
-
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows == 0) {
-                System.out.println("unlike request failed");
-            } else
-                System.out.println("Unlike request successfully executed");
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("Deleting unlike request failed" + e.getMessage());
@@ -487,14 +459,10 @@ public class PostDAOManager implements IPostDAO {
                 int userid = resultSet.getInt("userid");
                 int postid = resultSet.getInt("postid");
                 if (postId == postid && userId == userid) {
-                    System.out.println("User liked the post already");
                     return true;
                 } else {
-                    System.out.println("User did not like the post");
                     return false;
                 }
-            } else {
-                System.out.println("Result set was null");
             }
         } catch (SQLException e) {
             System.out.println("Could not fetch the likes for user" + e.getMessage());
@@ -519,7 +487,7 @@ public class PostDAOManager implements IPostDAO {
     }
 
     @Override
-    public PostContainer GetPostsForNewsFeed(int userId) throws SQLException {
+    public PostContainer GetPostsForNewsFeed(int userId) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -540,7 +508,6 @@ public class PostDAOManager implements IPostDAO {
 
             resultSet = statement.executeQuery();
 
-            //TODO add byte array with null
             while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
@@ -555,7 +522,6 @@ public class PostDAOManager implements IPostDAO {
                 post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
-
 
             if (posts.size() == 0) {
                 postContainer.setPosts(null);
@@ -593,7 +559,7 @@ public class PostDAOManager implements IPostDAO {
 
 
     @Override
-    public PostContainer LoadMorePostsForNewsFeed(int userId, int postId) throws SQLException {
+    public PostContainer LoadMorePostsForNewsFeed(int userId, int postId) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -614,7 +580,6 @@ public class PostDAOManager implements IPostDAO {
             statement.setInt(2, postId);
             resultSet = statement.executeQuery();
 
-            //TODO add byte array with null
             while (resultSet.next()) {
                 int newPostID = resultSet.getInt("postid");
                 String newPostTitle = resultSet.getString("title");
@@ -629,7 +594,6 @@ public class PostDAOManager implements IPostDAO {
                 post = new Post(newUserID, newPostID, newPostTitle, newPostContent, newPostPhoto, newPostLikes, newPostDate, newPlaceID, photoType, getPostCreator(newUserID));
                 posts.add(post);
             }
-
 
             if (posts.size() == 0) {
                 postContainer.setPosts(null);
@@ -677,18 +641,13 @@ public class PostDAOManager implements IPostDAO {
             statement.setInt(1, comment.getUserId());
             statement.setInt(2, comment.getPostId());
             statement.setString(3, comment.getContent());
+
             Date date = new Date(Calendar.getInstance().getTime().getTime());
             long time = date.getTime();
             Timestamp timestamp = new Timestamp(time);
+
             statement.setTimestamp(4, timestamp);
-
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows == 0) {
-                System.out.println("Creating comment request failed");
-            } else
-                System.out.println("Comment request successfully executed");
-
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Creating comment request failed" + e.getMessage());
         } finally {
@@ -718,13 +677,7 @@ public class PostDAOManager implements IPostDAO {
             statement.setInt(2, comment.getPostId());
             statement.setTimestamp(3, comment.getTimestamp());
 
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows == 0) {
-                System.out.println("Delete comment request failed");
-            } else
-                System.out.println("Delete comment request successfully executed");
-
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Deleting comment request failed" + e.getMessage());
         } finally {
@@ -745,6 +698,7 @@ public class PostDAOManager implements IPostDAO {
     public CommentContainer GetCommentForPost(int postId) {
         Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
         Comment comment;
         List<Comment> list = new ArrayList<>();
         CommentContainer container = new CommentContainer(new ArrayList<>(), false);
@@ -757,8 +711,8 @@ public class PostDAOManager implements IPostDAO {
                     "ORDER BY \"timestamp\" DESC\n" +
                     "LIMIT 6");
             statement.setInt(1, postId);
+            resultSet = statement.executeQuery();
 
-            ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()){
                 int userId = resultSet.getInt("userid");
                 int postId1 = resultSet.getInt("postid");
@@ -782,6 +736,11 @@ public class PostDAOManager implements IPostDAO {
         } catch (SQLException e) {
             System.out.println("Fetching comments request failed" + e.getMessage());
         } finally {
+            if (resultSet != null) try {
+                resultSet.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (statement != null) try {
                 statement.close();
             } catch (Exception e) {
@@ -854,7 +813,7 @@ public class PostDAOManager implements IPostDAO {
     }
 
     @Override
-    public int GetCommentCount(int postId) { //TODO result set not closed in some methods
+    public int GetCommentCount(int postId) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -893,6 +852,4 @@ public class PostDAOManager implements IPostDAO {
         }
         return 0;
     }
-
-
 }
